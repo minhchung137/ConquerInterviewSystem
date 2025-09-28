@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36109.1 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConquerInterviewAPI", "ConquerInterviewAPI\ConquerInterviewAPI.csproj", "{49A8A6A4-6827-0154-78B4-86D15FA8E422}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConquerInterviewDAO", "ConquerInterviewDAO\ConquerInterviewDAO.csproj", "{08B467DD-33D7-0532-C15D-F63A1DFDEF8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConquerInterviewRepositories", "ConquerInterviewRepositories\ConquerInterviewRepositories.csproj", "{3496F1EB-3D5A-8C52-958F-74BB3EF41BEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConquerInterviewServices", "ConquerInterviewServices\ConquerInterviewServices.csproj", "{5CAFA998-07A7-3CB6-04B6-4A09695B4C5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConquerInterviewBO", "ConquerInterviewBO\ConquerInterviewBO.csproj", "{D0F9658C-3CF6-4BC7-9656-73F5FC3C5932}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{49A8A6A4-6827-0154-78B4-86D15FA8E422}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49A8A6A4-6827-0154-78B4-86D15FA8E422}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49A8A6A4-6827-0154-78B4-86D15FA8E422}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49A8A6A4-6827-0154-78B4-86D15FA8E422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08B467DD-33D7-0532-C15D-F63A1DFDEF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08B467DD-33D7-0532-C15D-F63A1DFDEF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08B467DD-33D7-0532-C15D-F63A1DFDEF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08B467DD-33D7-0532-C15D-F63A1DFDEF8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3496F1EB-3D5A-8C52-958F-74BB3EF41BEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3496F1EB-3D5A-8C52-958F-74BB3EF41BEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3496F1EB-3D5A-8C52-958F-74BB3EF41BEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3496F1EB-3D5A-8C52-958F-74BB3EF41BEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CAFA998-07A7-3CB6-04B6-4A09695B4C5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CAFA998-07A7-3CB6-04B6-4A09695B4C5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CAFA998-07A7-3CB6-04B6-4A09695B4C5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CAFA998-07A7-3CB6-04B6-4A09695B4C5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0F9658C-3CF6-4BC7-9656-73F5FC3C5932}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0F9658C-3CF6-4BC7-9656-73F5FC3C5932}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0F9658C-3CF6-4BC7-9656-73F5FC3C5932}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0F9658C-3CF6-4BC7-9656-73F5FC3C5932}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49FB177C-6D56-4584-866C-80BE05569B11}
+	EndGlobalSection
+EndGlobal

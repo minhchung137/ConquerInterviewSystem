@@ -1,0 +1,6 @@
+@ConquerInterviewAPI_HostAddress = http://localhost:5162
+
+GET {{ConquerInterviewAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
