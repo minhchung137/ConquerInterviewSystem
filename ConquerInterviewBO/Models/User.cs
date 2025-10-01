@@ -5,29 +5,35 @@ namespace ConquerInterviewBO.Models;
 
 public partial class User
 {
-    public int user_id { get; set; }
+    public int UserId { get; set; }
 
-    public string username { get; set; } = null!;
+    public string Username { get; set; } = null!;
 
-    public string email { get; set; } = null!;
+    public string Email { get; set; } = null!;
 
-    public string password_hash { get; set; } = null!;
+    public string PasswordHash { get; set; } = null!;
 
-    public string? full_name { get; set; }
+    public string? FullName { get; set; }
 
-    public string? phone_number { get; set; }
+    public string? PhoneNumber { get; set; }
 
-    public DateOnly? date_of_birth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
 
-    public string? gender { get; set; }
+    public string? Gender { get; set; }
 
-    public string? avatar_url { get; set; }
+    public string? AvatarUrl { get; set; }
 
-    public bool? status { get; set; }
+    public bool? Status { get; set; }
 
-    public DateTime? created_at { get; set; }
+    public DateTime? CreatedAt { get; set; }
 
-    public DateTime? updated_at { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+
+    public string? Token { get; set; }
+
+    public string? ResetToken { get; set; }
+
+    public DateTime? ResetTokenExpiry { get; set; }
 
     public virtual ICollection<InterviewSession> InterviewSessions { get; set; } = new List<InterviewSession>();
 
@@ -39,5 +45,5 @@ public partial class User
 
     public virtual ICollection<UserSubscription> UserSubscriptions { get; set; } = new List<UserSubscription>();
 
-    public virtual ICollection<Role> roles { get; set; } = new List<Role>();
+    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

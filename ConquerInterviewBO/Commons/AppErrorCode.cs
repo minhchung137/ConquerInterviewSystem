@@ -16,6 +16,12 @@ namespace ConquerInterviewBO.Commons
         ListIsEmpty = 1005,
         UserAlreadyDeleted = 1006,
         UserUpdateFailed = 1007,
+        InvalidUsername = 1008,    
+        InvalidPassword = 1009,   
+        UserDisabled = 1010,
+        ForbiddenAccess = 1011,
+        InvalidToken = 1012,
+        TokenExpired = 1013,
 
         // Validation
         InvalidInput = 2001,

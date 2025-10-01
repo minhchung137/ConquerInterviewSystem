@@ -11,10 +11,13 @@ namespace ConquerInterviewRepositories.Implements
 {
     public class AuthRepository : IAuthRepository
     {
-        public List<User> GetAllUsers() => AuthDAO.Instance.GetAllUsers();
+        private readonly ConquerInterviewDbContext _context;
 
-        public User GetUserById(int id) => AuthDAO.Instance.GetUserById(id);
-
+        public AuthRepository(ConquerInterviewDbContext context)
+        {
+            _context = context;
+        }
+       
         public User GetUserByUsernameAndPass(string username, string pass)
             => AuthDAO.Instance.GetUserByUsernameAndPass(username, pass);
 
@@ -23,9 +26,12 @@ namespace ConquerInterviewRepositories.Implements
         public User GetUserByUsername(string username)
             => AuthDAO.Instance.GetUserByUsername(username);
         public void AddUser(User user) => AuthDAO.Instance.AddUser(user);
-        public void UpdateUser(User user) => AuthDAO.Instance.UpdateUser(user);
-
-        public void SoftDeleteUser(int userId) => AuthDAO.Instance.SoftDeleteUser(userId);
+        public void UpdateUserToken(int userId, string refreshToken)
+            => AuthDAO.Instance.UpdateUserToken(userId, refreshToken);
+        public User GetUserByResetToken(string token)
+            => AuthDAO.Instance.GetUserByResetToken(token);
+        public void UpdateUser(User user) 
+            => AuthDAO.Instance.UpdateUser(user);
 
     }
 }
