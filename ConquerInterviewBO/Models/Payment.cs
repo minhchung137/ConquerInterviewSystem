@@ -5,19 +5,19 @@ namespace ConquerInterviewBO.Models;
 
 public partial class Payment
 {
-    public int payment_id { get; set; }
+    public int PaymentId { get; set; }
 
-    public int order_id { get; set; }
+    public int OrderId { get; set; }
 
-    public string? provider { get; set; }
+    public string? Provider { get; set; }
 
-    public string? transaction_id { get; set; }
+    public string? TransactionId { get; set; }
 
-    public decimal amount { get; set; }
+    public decimal Amount { get; set; }
 
-    public string? status { get; set; }
+    public string? Status { get; set; }
 
-    public DateTime? paid_at { get; set; }
+    public DateTime? PaidAt { get; set; }
 
-    public virtual Order order { get; set; } = null!;
+    public virtual Order Order { get; set; } = null!;
 }

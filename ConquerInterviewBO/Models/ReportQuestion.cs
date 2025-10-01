@@ -5,33 +5,33 @@ namespace ConquerInterviewBO.Models;
 
 public partial class ReportQuestion
 {
-    public int report_q_id { get; set; }
+    public int ReportQId { get; set; }
 
-    public string? overall_assessment { get; set; }
+    public string? OverallAssessment { get; set; }
 
-    public string? facial_expression { get; set; }
+    public string? FacialExpression { get; set; }
 
-    public string? speaking_speed_clarity { get; set; }
+    public string? SpeakingSpeedClarity { get; set; }
 
-    public string? expertise_experience { get; set; }
+    public string? ExpertiseExperience { get; set; }
 
-    public string? response_duration_per_question { get; set; }
+    public string? ResponseDurationPerQuestion { get; set; }
 
-    public string? answer_content_analysis { get; set; }
+    public string? AnswerContentAnalysis { get; set; }
 
-    public string? comparison_with_other_candidates { get; set; }
+    public string? ComparisonWithOtherCandidates { get; set; }
 
-    public string? problem_solving_skills { get; set; }
+    public string? ProblemSolvingSkills { get; set; }
 
-    public string? status { get; set; }
+    public string? Status { get; set; }
 
-    public int customer_id { get; set; }
+    public int CustomerId { get; set; }
 
-    public int interview_a_id { get; set; }
+    public int InterviewAId { get; set; }
+
+    public virtual User Customer { get; set; } = null!;
+
+    public virtual InterviewAnswer InterviewA { get; set; } = null!;
 
     public virtual ICollection<Personalization> Personalizations { get; set; } = new List<Personalization>();
-
-    public virtual User customer { get; set; } = null!;
-
-    public virtual InterviewAnswer interview_a { get; set; } = null!;
 }

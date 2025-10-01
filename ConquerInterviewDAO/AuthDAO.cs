@@ -29,93 +29,101 @@ namespace ConquerInterviewDAO
         {
             _context = new ConquerInterviewDbContext();
         }
-        public List<User> GetAllUsers()
-        {
-            return _context.Users
-                .Include(u => u.roles)
-                .ToList();
-        }
+        
         public User GetUserByUsernameAndPass(string userName, string pass)
         {
             return _context.Users
-                .Include(u => u.roles)
-                .FirstOrDefault(u => u.username.Equals(userName) && u.password_hash.Equals(pass) && u.status == true);
+                .Include(u => u.Roles)
+                .FirstOrDefault(u => u.Username.Equals(userName) && u.PasswordHash.Equals(pass) && u.Status == true);
         }
         public User GetUserByEmail(string email)
         {
             return _context.Users
-                .Include(u => u.roles)
-                .FirstOrDefault(u => u.email.Equals(email));
+                .Include(u => u.Roles)
+                .FirstOrDefault(u => u.Email.Equals(email));
         }
         public User GetUserByUsername(string username)
         {
             return _context.Users
-                .Include(u => u.roles)
-                .FirstOrDefault(u => u.username.Equals(username));
+                .Include(u => u.Roles)
+                .FirstOrDefault(u => u.Username.Equals(username));
         }
-        // --- Get user by id ---
-        public User GetUserById(int id)
-        {
-            return _context.Users
-                .Include(u => u.roles)
-                .FirstOrDefault(u => u.user_id == id && u.status == true);
-        }
+
         // --- Add new user ---
         public void AddUser(User user)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges(); 
-
-            int roleId = (user.user_id == 1) ? 1 : 3;
-
-            var role = _context.Roles.FirstOrDefault(r => r.role_id == roleId);
-            if (role == null)
+            try
             {
-                throw new AppException(AppErrorCode.InternalError);
+                _context.Users.Add(user);
+                _context.SaveChanges();
+
+                int roleId = (user.UserId == 1) ? 1 : 3;
+                var role = _context.Roles.FirstOrDefault(r => r.RoleId == roleId);
+                if (role == null)
+                {
+                    throw new AppException(AppErrorCode.InternalError);
+                }
+                user.Roles.Add(role);
+                _context.SaveChanges();
             }
-
-            user.roles.Add(role);
-
-            _context.SaveChanges();
+            catch (DbUpdateException ex)
+            {
+                // Kiểm tra lỗi duplicate entry
+                if (ex.InnerException?.Message.Contains("Duplicate entry") == true
+                    || ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true)
+                {
+                    throw new AppException(AppErrorCode.UserAlreadyExists);
+                }
+                throw;
+            }
         }
-        // --- Soft delete ---
-        public void SoftDeleteUser(int userId)
-        {
-            var user = _context.Users
-                .AsTracking()
-                .FirstOrDefault(u => u.user_id == userId);
 
+
+        // --- Auth with JWT---
+        public void UpdateUserToken(int userId, string refreshToken)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
             if (user == null)
                 throw new AppException(AppErrorCode.UserNotFound);
 
-            if (user.status == false)
-                throw new AppException(AppErrorCode.UserAlreadyDeleted);
-
-            user.status = false;
-            user.updated_at = DateTime.UtcNow;
-
-            _context.Users.Update(user); 
+            user.Token = refreshToken;
+            user.UpdatedAt = DateTime.UtcNow;
             _context.SaveChanges();
         }
 
 
-        // --- Update user fields (only allowed fields) ---
+        // --- Get user by reset token ---
+        public User GetUserByResetToken(string token)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.ResetToken == token);
+
+            if (user == null)
+                throw new AppException(AppErrorCode.InvalidToken);
+
+            if (!user.ResetTokenExpiry.HasValue || user.ResetTokenExpiry <= DateTime.UtcNow)
+                throw new AppException(AppErrorCode.TokenExpired);
+
+            return user;
+        }
+
+        // --- Update user ---
         public void UpdateUser(User updatedUser)
         {
-            var user = _context.Users.FirstOrDefault(u => u.user_id == updatedUser.user_id);
-            if (user == null)
+            var existing = _context.Users.FirstOrDefault(u => u.UserId == updatedUser.UserId);
+            if (existing == null)
                 throw new AppException(AppErrorCode.UserNotFound);
 
-            // cập nhật các trường cho phép (không thay password/email/username ở đây)
-            user.full_name = updatedUser.full_name;
-            user.phone_number = updatedUser.phone_number;
-            user.date_of_birth = updatedUser.date_of_birth;
-            user.gender = updatedUser.gender;
-            user.avatar_url = updatedUser.avatar_url;
-            user.updated_at = DateTime.UtcNow;
+            existing.FullName = updatedUser.FullName;
+            existing.PhoneNumber = updatedUser.PhoneNumber;
+            existing.DateOfBirth = updatedUser.DateOfBirth;
+            existing.Gender = updatedUser.Gender;
+            existing.AvatarUrl = updatedUser.AvatarUrl;
+            existing.PasswordHash = updatedUser.PasswordHash;
+            existing.ResetToken = updatedUser.ResetToken;
+            existing.ResetTokenExpiry = updatedUser.ResetTokenExpiry;
+            existing.UpdatedAt = DateTime.UtcNow;
 
             _context.SaveChanges();
         }
-
     }
 }

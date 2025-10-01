@@ -13,6 +13,9 @@ namespace ConquerInterviewBO.Commons
         {
             { AppErrorCode.UserAlreadyExists, "User already exists with same email or username" },
             { AppErrorCode.InvalidCredentials, "Invalid credentials, please check email/username and password or account has been disabled" },
+            { AppErrorCode.InvalidUsername, "Username does not exist" },
+            { AppErrorCode.InvalidPassword, "Password is incorrect" },
+            { AppErrorCode.UserDisabled, "Account has been disabled" },
             { AppErrorCode.UnauthorizedAccess, "You are not authorized to perform this action" },
             { AppErrorCode.InvalidInput, "The provided input data is invalid" },
             { AppErrorCode.MissingRequiredField, "Some required fields are missing" },
@@ -22,7 +25,10 @@ namespace ConquerInterviewBO.Commons
             { AppErrorCode.UserNotFound, "User not found"   },
             { AppErrorCode.ListIsEmpty, "The list is empty" },
             { AppErrorCode.UserAlreadyDeleted, "User is already deleted" }, 
-            { AppErrorCode.UserUpdateFailed, "Failed to update user" }
+            { AppErrorCode.UserUpdateFailed, "Failed to update user" },
+            { AppErrorCode.ForbiddenAccess, "You do not have permission to access this resource" },
+            { AppErrorCode.InvalidToken, "Reset token is invalid or expired" },
+            { AppErrorCode.TokenExpired, "The reset token has expired" },
         };
 
         public static string GetMessage(AppErrorCode code) =>

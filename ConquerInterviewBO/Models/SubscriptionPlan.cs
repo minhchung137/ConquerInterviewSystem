@@ -5,15 +5,15 @@ namespace ConquerInterviewBO.Models;
 
 public partial class SubscriptionPlan
 {
-    public int plan_id { get; set; }
+    public int PlanId { get; set; }
 
-    public string plan_name { get; set; } = null!;
+    public string PlanName { get; set; } = null!;
 
-    public decimal price { get; set; }
+    public decimal Price { get; set; }
 
-    public int duration_days { get; set; }
+    public int DurationDays { get; set; }
 
-    public bool? is_active { get; set; }
+    public bool? IsActive { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 

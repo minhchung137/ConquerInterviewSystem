@@ -9,13 +9,12 @@ namespace ConquerInterviewRepositories.Interfaces
 {
     public interface IAuthRepository
     {
-        List<User> GetAllUsers();
-        User GetUserByUsernameAndPass(string userName, string pass);
-        User GetUserByEmail(string email);
-        User GetUserByUsername(string username);
-        User GetUserById(int id);
-        void AddUser(User user);
-        void UpdateUser(User user);
-        void SoftDeleteUser(int userId);
+        public User GetUserByUsernameAndPass(string userName, string pass);
+        public User GetUserByEmail(string email);
+        public User GetUserByUsername(string username);
+        public void AddUser(User user);
+        public void UpdateUserToken(int userId, string refreshToken);
+        public User GetUserByResetToken(string token);
+        public void UpdateUser(User user);
     }
 }

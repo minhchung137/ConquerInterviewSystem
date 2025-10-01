@@ -16,10 +16,9 @@ namespace ConquerInterviewAPI.Controller
     {
         private readonly IAuthService _authService;
 
-        public AuthController()
+        public AuthController(IAuthService authService)
         {
-            IAuthRepository authRepo = new AuthRepository();
-            _authService = new AuthService(authRepo);
+            _authService = authService;
         }
 
         [HttpPost("register")]
@@ -46,73 +45,39 @@ namespace ConquerInterviewAPI.Controller
                     APIResponse<string>.Fail(AppErrorCode.InvalidCredentials, ResponseStatus.Unauthorized));
             }
             return StatusCode((int)ResponseStatus.Created,
-                APIResponse<UserResponse>.Success(userResponse, "Login success"));
+                APIResponse<AuthResponse>.Success(userResponse, "Login success"));
         }
-        [HttpGet("{userId}")]
-        public IActionResult GetUserById(int userId)
-        {
-            var userResponse = _authService.GetUserById(userId);
-            if (userResponse == null)
-            {
-                return StatusCode((int)ResponseStatus.NotFound,
-                    APIResponse<string>.Fail(AppErrorCode.UserNotFound, ResponseStatus.NotFound));
-            }
-            return StatusCode((int)ResponseStatus.Success,
-                APIResponse<UserResponse>.Success(userResponse, "Get user success"));
-        }
-
-        [HttpGet("all")]
-        public IActionResult GetAllUsers()
-        {
-            var users = _authService.GetAllUsers();
-            if (users == null || users.Count == 0)
-            {
-                return StatusCode((int)ResponseStatus.NotFound,
-                    APIResponse<string>.Fail(AppErrorCode.ListIsEmpty, ResponseStatus.NotFound));
-            }
-            return StatusCode((int)ResponseStatus.Success,
-                APIResponse<List<UserResponse>>.Success(users, "Get all users success"));
-        }
-        [HttpPut("{userId}")]
-        public IActionResult UpdateUser(int userId, [FromBody] UpdateUserRequest request)
+        [HttpPost("forgot-password")]
+        public IActionResult ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
             try
             {
-                var userResponse = _authService.UpdateUser(userId, request);
-                if (userResponse == null)
-                {
-                    return StatusCode((int)ResponseStatus.NotFound,
-                        APIResponse<string>.Fail(AppErrorCode.UserNotFound, ResponseStatus.NotFound));
-                }
+                _authService.ForgotPassword(request.Email);
                 return StatusCode((int)ResponseStatus.Success,
-                    APIResponse<UserResponse>.Success(userResponse, "User updated successfully"));
+                    APIResponse<string>.Success("Reset password token sent to your email."));
             }
-            catch (AppException ex) when (ex.ErrorCode == AppErrorCode.UserNotFound)
+            catch (AppException ex)
             {
                 return StatusCode((int)ResponseStatus.NotFound,
-                    APIResponse<string>.Fail(AppErrorCode.UserNotFound, ResponseStatus.NotFound));
-            }
-            catch (Exception)
-            {
-                return StatusCode((int)ResponseStatus.InternalServerError,
-                    APIResponse<string>.Fail(AppErrorCode.UserUpdateFailed, ResponseStatus.InternalServerError));
+                    APIResponse<string>.Fail(ex.ErrorCode, ResponseStatus.NotFound));
             }
         }
 
-        [HttpDelete("{userId}")]
-        public IActionResult DeleteUser(int userId)
+        [HttpPost("reset-password")]
+        public IActionResult ResetPassword([FromBody] ResetPasswordRequest request)
         {
             try
             {
-                _authService.SoftDeleteUser(userId);
+                _authService.ResetPassword(request.Token, request.NewPassword);
                 return StatusCode((int)ResponseStatus.Success,
-                    APIResponse<string>.Success("User deleted successfully"));
+                    APIResponse<string>.Success("Password has been reset successfully."));
             }
-            catch (Exception ex)
+            catch (AppException ex)
             {
-                return StatusCode((int)ResponseStatus.NotFound,
-                    APIResponse<string>.Fail(AppErrorCode.UserNotFound, ResponseStatus.NotFound));
+                return StatusCode((int)ResponseStatus.BadRequest,
+                    APIResponse<string>.Fail(ex.ErrorCode, ResponseStatus.BadRequest));
             }
         }
+
     }
 }

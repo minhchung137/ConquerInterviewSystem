@@ -11,10 +11,8 @@ namespace ConquerInterviewServices.Interfaces
     public interface IAuthService
     {
         public UserResponse Register(RegisterRequest request);
-        public UserResponse Login(LoginRequest request);
-        public UserResponse GetUserById(int userId);
-        public List<UserResponse> GetAllUsers();
-        UserResponse UpdateUser(int userId, UpdateUserRequest request);
-        void SoftDeleteUser(int userId);
+        public AuthResponse Login(LoginRequest request);
+        public void ForgotPassword(string email);
+        public void ResetPassword(string token, string newPassword);
     }
 }

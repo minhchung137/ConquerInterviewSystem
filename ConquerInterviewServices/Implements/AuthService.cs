@@ -8,6 +8,7 @@ using ConquerInterviewServices.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,10 +17,13 @@ namespace ConquerInterviewServices.Implements
     public class AuthService : IAuthService
     {
         private readonly IAuthRepository _authRepository;
-
-        public AuthService(IAuthRepository authRepository)
+        private readonly IJwtService _jwtService;
+        private readonly IEmailService _emailService;
+        public AuthService(IAuthRepository authRepository, IJwtService jwtService, IEmailService emailService)
         {
             _authRepository = authRepository;
+            _jwtService = jwtService;
+            _emailService = emailService;
         }
 
         public UserResponse Register(RegisterRequest request)
@@ -32,92 +36,115 @@ namespace ConquerInterviewServices.Implements
 
             var user = new User
             {
-                username = request.Username,
-                email = request.Email,
-                full_name = request.FullName,
-                phone_number = request.PhoneNumber,
-                status = true,
-                date_of_birth = request.DateOfBirth.HasValue ? DateOnly.FromDateTime(request.DateOfBirth.Value) : null,
-                gender = request.Gender,
-                avatar_url = request.AvatarUrl,
-                created_at = DateTime.UtcNow,
-                updated_at = DateTime.UtcNow,
-                password_hash = request.Password
+                Username = request.Username,
+                Email = request.Email,
+                FullName = request.FullName,
+                PhoneNumber = request.PhoneNumber,
+                Status = true,
+                DateOfBirth = request.DateOfBirth.HasValue ? DateOnly.FromDateTime(request.DateOfBirth.Value) : null,
+                Gender = request.Gender,
+                AvatarUrl = request.AvatarUrl,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                PasswordHash = request.Password,
             };
 
             _authRepository.AddUser(user);
+            _emailService.SendEmail(user.Email, "Welcome",
+               $"Wellcome to Conquer Interview");
 
             return MapToUserResponse(user);
         }
-        public UserResponse Login(LoginRequest request)
+        public AuthResponse Login(LoginRequest request)
         {
-            var user = _authRepository.GetUserByUsernameAndPass(request.Username, request.Password);
+            var user = _authRepository.GetUserByUsername(request.Username);
             if (user == null)
+                throw new AppException(AppErrorCode.InvalidUsername);
+
+            if (user.PasswordHash != request.Password)
+                throw new AppException(AppErrorCode.InvalidPassword);
+
+            if (user.Status == false)
+                throw new AppException(AppErrorCode.UserDisabled);
+
+
+            // Gọi JwtService
+            var accessToken = _jwtService.GenerateAccessToken(user);
+            var refreshToken = _jwtService.GenerateRefreshToken();
+
+            // Lưu refresh token vào DB
+            _authRepository.UpdateUserToken(user.UserId, refreshToken);
+
+            return new AuthResponse
             {
-                return null;
-            }
-            return MapToUserResponse(user);
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                User = new UserResponse
+                {
+                    UserId = user.UserId,
+                    Username = user.Username,
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    PhoneNumber = user.PhoneNumber,
+                    Gender = user.Gender,
+                    AvatarUrl = user.AvatarUrl,
+                    DateOfBirth = user.DateOfBirth?.ToDateTime(new TimeOnly(0, 0)),
+                    Created_at = user.CreatedAt,
+                    Updated_at = user.UpdatedAt,
+                    Roles = user.Roles.Select(r => r.RoleName).ToList()
+                }
+            };
         }
-
-        public List<UserResponse> GetAllUsers()
-        {
-            var users = _authRepository.GetAllUsers();
-            return users.Select(user => MapToUserResponse(user)).ToList();
-        }
-
-        public UserResponse GetUserById(int id)
-        {
-            var user = _authRepository.GetUserById(id);
-            if (user == null)
-            {
-                return null;
-            }
-            
-            return MapToUserResponse(user);
-        }
-        public UserResponse UpdateUser(int userId, UpdateUserRequest request)
-        {
-            var existing = _authRepository.GetUserById(userId);
-            if (existing == null)
-                throw new AppException(AppErrorCode.UserNotFound);
-
-            existing.full_name = request.FullName;
-            existing.phone_number = request.PhoneNumber;
-            existing.date_of_birth = request.DateOfBirth.HasValue ? DateOnly.FromDateTime(request.DateOfBirth.Value) : null;
-            existing.gender = request.Gender;
-            existing.avatar_url = request.AvatarUrl;
-            existing.updated_at = DateTime.UtcNow;
-
-            // gọi repository -> DAO cập nhật
-            _authRepository.UpdateUser(existing);
-
-            // reload hoặc dùng existing (roles có thể chưa loaded; GetUserById bao gồm roles)
-            var user = _authRepository.GetUserById(userId);
-            return MapToUserResponse(user);
-        }
-
-        public void SoftDeleteUser(int userId)
-        {
-            _authRepository.SoftDeleteUser(userId);
-        }
-
-        // Helper method to map User to UserResponse
         private UserResponse MapToUserResponse(User user)
         {
             return new UserResponse
             {
-                UserId = user.user_id,
-                Username = user.username,
-                Email = user.email,
-                FullName = user.full_name,
-                PhoneNumber = user.phone_number,
-                DateOfBirth = user.date_of_birth?.ToDateTime(TimeOnly.MinValue),
-                Gender = user.gender,
-                AvatarUrl = user.avatar_url,
-                Created_at = user.created_at,
-                Updated_at = user.updated_at,
-                Roles = user.roles?.Select(r => r.role_name).ToList() ?? new List<string>()
+                UserId = user.UserId,
+                Username = user.Username,
+                Email = user.Email,
+                FullName = user.FullName,
+                PhoneNumber = user.PhoneNumber,
+                DateOfBirth = user.DateOfBirth?.ToDateTime(TimeOnly.MinValue),
+                Gender = user.Gender,
+                AvatarUrl = user.AvatarUrl,
+                Created_at = user.CreatedAt,
+                Updated_at = user.UpdatedAt,
+                Roles = user.Roles?.Select(r => r.RoleName).ToList() ?? new List<string>()
             };
         }
+
+        public void ForgotPassword(string email)
+        {
+            var user = _authRepository.GetUserByEmail(email);
+            if (user == null)
+                throw new AppException(AppErrorCode.UserNotFound);
+
+            var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+            user.ResetToken = token;
+            user.ResetTokenExpiry = DateTime.UtcNow.AddMinutes(30);
+
+            _authRepository.UpdateUser(user);
+
+            // gửi email
+            _emailService.SendEmail(user.Email, "Password Reset",
+                $"Click this link to reset your password: https://yourdomain.com/reset-password?token={token}");
+        }
+
+        public void ResetPassword(string token, string newPassword)
+        {
+            var user = _authRepository.GetUserByResetToken(token);
+            if (user == null)
+                throw new AppException(AppErrorCode.InvalidToken);
+
+            if (user.ResetTokenExpiry < DateTime.UtcNow)
+                throw new AppException(AppErrorCode.TokenExpired);
+
+            user.PasswordHash = newPassword; // Hash nếu cần
+            user.ResetToken = null;
+            user.ResetTokenExpiry = null;
+
+            _authRepository.UpdateUser(user);
+        }
+
     }
 }
