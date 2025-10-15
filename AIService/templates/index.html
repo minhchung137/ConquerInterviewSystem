@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo 5 Vòng Phỏng Vấn (Speech-to-Text)</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f4f7f9; color: #333; }
+        h1 { color: #1a73e8; text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .container { background-color: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
+        button { padding: 12px 20px; background-color: #1a73e8; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 15px; font-size: 1em; }
+        button:hover:not(:disabled) { background-color: #145cb0; }
+        button:disabled { background-color: #aaa; cursor: not-allowed; }
+        select, textarea { padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1em; box-sizing: border-box; margin-top: 5px; width: 100%; }
+        .question-box { background-color: #e6f7ff; border: 1px solid #91d5ff; padding: 20px; margin-top: 20px; border-radius: 8px; font-size: 1.1em; line-height: 1.6; }
+        .result-box { margin-top: 10px; padding: 15px; border-radius: 6px; background-color: #f8f9fa; white-space: pre-wrap; border-left: 5px solid #1a73e8; min-height: 50px; font-size: 0.95em; }
+        .round-info { font-weight: bold; color: #d9534f; margin-bottom: 15px; }
+        #resultsArea { border-top: 2px solid #eee; margin-top: 20px; padding-top: 20px; }
+        .record-button-group { display: flex; align-items: center; gap: 10px; }
+        #recordButton { background-color: #dc3545; }
+        #recordButton:hover { background-color: #c82333; }
+        #micStatus { font-size: 1em; color: #dc3545; display: none; }
+        .mic-active { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Demo Phỏng Vấn 5 Vòng (Speech-to-Text)</h1>
+        
+        <div id="setupArea">
+            <h2>1. Thiết lập Vị trí & Ngành:</h2>
+            
+            <label for="interviewTopic">Chọn Vị trí:</label>
+            <select id="interviewTopic">
+                {% for topic in topics %}
+                    <option value="{{ topic }}">{{ topic }}</option>
+                {% endfor %}
+            </select>
+            
+            <label for="industryFilter" style="margin-top: 15px; display: block;">Chọn Ngành:</label>
+            <select id="industryFilter">
+                {% for industry in industries %}
+                    <option value="{{ industry }}">{{ industry }}</option>
+                {% endfor %}
+            </select>
+            
+            <button onclick="startInterview()">Bắt đầu Phỏng vấn (5 Câu hỏi)</button>
+        </div>
+
+        <div id="interviewArea" style="display: none;">
+            <p class="round-info"><span id="currentRoundDisplay">Vòng 1</span> / <span id="totalRoundsDisplay">5</span></p>
+
+            <h2>Câu hỏi AI:</h2>
+            <div id="questionArea" class="question-box"></div>
+            <input type="hidden" id="currentRoundValue" value="1">
+
+            <h2>Câu Trả Lời của Bạn: (Ghi âm hoặc Nhập)</h2>
+            <textarea id="userAnswer" rows="8" placeholder="Nhập câu trả lời hoặc nhấn GHI ÂM..."></textarea>
+            
+            <div class="record-button-group">
+                <button id="recordButton" onclick="toggleRecording()" type="button">🎙️ GHI ÂM CÂU TRẢ LỜI</button>
+                <span id="micStatus" style="display: none;">Đang nghe... 🔴</span>
+            </div>
+            
+            <button onclick="submitAnswer()" style="width: 100%;">Gửi Câu Trả Lời & Tiếp tục</button>
+            <hr>
+
+            <div id="resultsArea">
+                <h3>Phản hồi Vòng Trước (<span id="prevRoundDisplay">Chưa có</span>)</h3>
+                <p><strong>Báo cáo Đánh giá (Report):</strong></p>
+                <div id="reportResult" class="result-box">Chưa có dữ liệu.</div>
+
+                <p><strong>Phản hồi & Cải thiện (Feedback):</strong></p>
+                <div id="feedbackResult" class="result-box">Chưa có dữ liệu.</div>
+
+                <p><strong>Câu Trả Lời Mẫu:</strong></p>
+                <div id="suggestedAnswerResult" class="result-box">Chưa có dữ liệu.</div>
+            </div>
+        </div>
+
+        <div id="finalReportArea" style="display: none;">
+            <h2>✅ PHỎNG VẤN HOÀN TẤT!</h2>
+            <p id="finalMessage" style="font-size: 1.1em; color: green;"></p>
+            <button onclick="window.location.reload()">Bắt đầu Phiên mới</button>
+        </div>
+    </div>
+
+    <script>
+        let totalRounds = 5;
+        // Khởi tạo SpeechRecognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+        let isRecording = false;
+        
+        if (recognition) {
+            recognition.continuous = true; // Tiếp tục lắng nghe cho đến khi dừng
+            recognition.interimResults = true; // Cho phép hiển thị kết quả tạm thời
+            recognition.lang = 'vi-VN'; // Đặt ngôn ngữ sang Tiếng Việt
+            
+            recognition.onstart = function() {
+                isRecording = true;
+                document.getElementById('recordButton').textContent = '⏹️ DỪNG GHI ÂM';
+                document.getElementById('recordButton').style.backgroundColor = '#007bff';
+                document.getElementById('micStatus').style.display = 'inline';
+            };
+
+            recognition.onresult = function(event) {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                
+                // Hiển thị kết quả tạm thời (nếu có)
+                const currentText = document.getElementById('userAnswer').value.trim();
+                
+                // Nếu có kết quả cuối cùng, nối vào văn bản hiện tại
+                if (finalTranscript.trim().length > 0) {
+                     // Nếu textbox không rỗng, thêm dấu cách/xuống dòng trước khi nối
+                    const separator = currentText.length > 0 && !currentText.endsWith('.') ? '. ' : '';
+                    document.getElementById('userAnswer').value = currentText + separator + finalTranscript.trim();
+                }
+                
+                // Cập nhật kết quả tạm thời (Interim) (Không bắt buộc, nhưng giúp người dùng thấy đang nghe)
+                document.getElementById('micStatus').textContent = interimTranscript || 'Đang nghe... 🔴';
+            };
+
+            recognition.onend = function() {
+                isRecording = false;
+                document.getElementById('recordButton').textContent = '🎙️ GHI ÂM CÂU TRẢ LỜI';
+                document.getElementById('recordButton').style.backgroundColor = '#dc3545';
+                document.getElementById('micStatus').style.display = 'none';
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Lỗi nhận dạng giọng nói:', event.error);
+                if (event.error === 'not-allowed') {
+                    alert('Lỗi: Bạn cần cấp quyền truy cập microphone cho trình duyệt.');
+                } else if (event.error !== 'no-speech') {
+                    alert('Lỗi ghi âm: ' + event.error + '. Vui lòng thử lại.');
+                }
+            };
+        } else {
+            document.getElementById('recordButton').disabled = true;
+            document.getElementById('recordButton').textContent = '❌ Trình duyệt không hỗ trợ Ghi âm';
+        }
+        
+        function toggleRecording() {
+            if (!recognition) return;
+
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                // Xóa nội dung cũ khi bắt đầu ghi âm mới
+                // document.getElementById('userAnswer').value = ''; 
+                recognition.start();
+            }
+        }
+        
+        // --- CÁC HÀM CŨ (START/SUBMIT) GIỮ NGUYÊN ---
+        
+        async function startInterview() {
+            const topic = document.getElementById('interviewTopic').value;
+            const industryFilter = document.getElementById('industryFilter').value;
+            
+            if (isRecording) recognition.stop(); // Dừng ghi âm nếu đang hoạt động
+
+            try {
+                const response = await fetch('/start_interview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic: topic, industry_filter: industryFilter })
+                });
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('Lỗi: ' + data.error);
+                    return;
+                }
+
+                totalRounds = data.total_rounds;
+
+                document.getElementById('setupArea').style.display = 'none';
+                document.getElementById('interviewArea').style.display = 'block';
+                
+                updateUI(data.current_round, data.question);
+                
+                document.getElementById('reportResult').textContent = 'Chưa có dữ liệu.';
+                document.getElementById('feedbackResult').textContent = 'Chưa có dữ liệu.';
+                document.getElementById('suggestedAnswerResult').textContent = 'Chưa có dữ liệu.';
+                document.getElementById('prevRoundDisplay').textContent = 'Chưa có';
+
+            } catch (error) {
+                alert('Lỗi khởi tạo phiên. Vui lòng kiểm tra console.');
+                console.error(error);
+            }
+        }
+
+        async function submitAnswer() {
+            if (isRecording) recognition.stop(); // Dừng ghi âm trước khi gửi
+            
+            const answer = document.getElementById('userAnswer').value;
+            const currentRound = parseInt(document.getElementById('currentRoundValue').value);
+            
+            if (!answer.trim()) {
+                alert('Vui lòng nhập hoặc ghi âm câu trả lời của bạn.');
+                return;
+            }
+
+            document.getElementById('reportResult').textContent = 'Đang xử lý feedback...';
+            document.getElementById('feedbackResult').textContent = 'Đang xử lý feedback...';
+            document.getElementById('suggestedAnswerResult').textContent = 'Đang xử lý feedback...';
+            document.querySelector('#interviewArea button:last-of-type').disabled = true;
+
+            try {
+                const response = await fetch('/submit_round', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ round: currentRound, answer: answer })
+                });
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('Lỗi xử lý vòng: ' + data.error);
+                    return;
+                }
+
+                displayResults(currentRound, data.report, data.feedback, data.suggested_answer);
+
+                if (data.status === 'finished') {
+                    document.getElementById('interviewArea').style.display = 'none';
+                    document.getElementById('finalReportArea').style.display = 'block';
+                    document.getElementById('finalMessage').textContent = data.final_report;
+                } else if (data.status === 'next_round') {
+                    updateUI(data.current_round, data.next_question);
+                }
+            } catch (error) {
+                alert('Lỗi gửi câu trả lời. Vui lòng kiểm tra console.');
+                console.error(error);
+            } finally {
+                document.querySelector('#interviewArea button:last-of-type').disabled = false;
+            }
+        }
+
+        function updateUI(round, question) {
+            document.getElementById('currentRoundDisplay').textContent = `Vòng ${round}`;
+            document.getElementById('totalRoundsDisplay').textContent = totalRounds;
+            document.getElementById('currentRoundValue').value = round;
+            document.getElementById('questionArea').textContent = question;
+            document.getElementById('userAnswer').value = '';
+        }
+
+        function displayResults(round, report, feedback, suggested) {
+            document.getElementById('prevRoundDisplay').textContent = `Vòng ${round}`;
+            document.getElementById('reportResult').textContent = report.trim();
+            document.getElementById('feedbackResult').textContent = feedback.trim();
+            document.getElementById('suggestedAnswerResult').textContent = suggested.trim();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+﻿using ConquerInterviewBO.Models;
+using ConquerInterviewDAO;
+using ConquerInterviewRepositories.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConquerInterviewRepositories.Implements
+{
+    public class ReportRepository : IReportRepository
+    {
+        private readonly ConquerInterviewDbContext _context;
+
+        public ReportRepository(ConquerInterviewDbContext context)
+        {
+            _context = context;
+        }
+
+        public Task<ReportQuestion> GenerateAIReportAsync(InterviewAnswer answer)
+            => ReportDAO.Instance.GenerateAIReportAsync(answer);
+
+        public Task<List<ReportQuestion>> GetReportsBySessionAsync(int sessionId)
+            => ReportDAO.Instance.GetReportsBySessionAsync(sessionId);
+    }
+}

@@ -81,5 +81,26 @@ namespace ConquerInterviewDAO
             _context.Users.Update(user);
             _context.SaveChanges();
         }
+        // --- Update user role ---
+        public void UpdateUserRole(int userId, string roleName)
+        {
+            var user = _context.Users
+                .Include(u => u.Roles)
+                .FirstOrDefault(u => u.UserId == userId && u.Status == true);
+
+            if (user == null)
+                throw new AppException(AppErrorCode.UserNotFound);
+
+            var role = _context.Roles.FirstOrDefault(r => r.RoleName == roleName);
+            if (role == null)
+                throw new AppException(AppErrorCode.RoleNotFound);
+
+            // Xóa role cũ và gán role mới (tuỳ quan hệ n-n hoặc 1-n)
+            user.Roles.Clear();
+            user.Roles.Add(role);
+            user.UpdatedAt = DateTime.UtcNow;
+
+            _context.SaveChanges();
+        }
     }
 }

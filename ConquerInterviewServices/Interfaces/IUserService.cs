@@ -14,5 +14,6 @@ namespace ConquerInterviewServices.Interfaces
         public List<UserResponse> GetAllUsers();
         UserResponse UpdateUser(int userId, UpdateUserRequest request);
         void SoftDeleteUser(int userId);
+        UserResponse UpdateUserRole(UpdateUserRoleRequest request);
     }
 }
