@@ -92,5 +92,32 @@ namespace ConquerInterviewAPI.Controller
                     APIResponse<string>.Fail(AppErrorCode.UserNotFound, ResponseStatus.NotFound));
             }
         }
+
+        [Authorize(Roles = "ADMIN")]
+        [HttpPut("role")]
+        public IActionResult UpdateUserRole([FromBody] UpdateUserRoleRequest request)
+        {
+            try
+            {
+                var updatedUser = _userService.UpdateUserRole(request);
+                return StatusCode((int)ResponseStatus.Success,
+                    APIResponse<UserResponse>.Success(updatedUser, "User role updated successfully"));
+            }
+            catch (AppException ex) when (ex.ErrorCode == AppErrorCode.UserNotFound)
+            {
+                return StatusCode((int)ResponseStatus.NotFound,
+                    APIResponse<string>.Fail(AppErrorCode.UserNotFound, ResponseStatus.NotFound));
+            }
+            catch (AppException ex) when (ex.ErrorCode == AppErrorCode.RoleNotFound)
+            {
+                return StatusCode((int)ResponseStatus.NotFound,
+                    APIResponse<string>.Fail(AppErrorCode.RoleNotFound, ResponseStatus.NotFound));
+            }
+            catch (Exception)
+            {
+                return StatusCode((int)ResponseStatus.InternalServerError,
+                    APIResponse<string>.Fail(AppErrorCode.InternalError, ResponseStatus.InternalServerError));
+            }
+        }
     }
 }

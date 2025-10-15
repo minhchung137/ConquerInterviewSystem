@@ -22,6 +22,7 @@ namespace ConquerInterviewBO.Commons
         ForbiddenAccess = 1011,
         InvalidToken = 1012,
         TokenExpired = 1013,
+        RoleNotFound = 1014,
 
         // Validation
         InvalidInput = 2001,

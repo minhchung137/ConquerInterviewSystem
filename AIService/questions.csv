@@ -1,0 +1,51 @@
+topic,industry,question
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích về Idempotency và vai trò trong giao dịch tiền tệ.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Mô tả cách bạn thiết kế hệ thống sổ cái (ledger system) bất biến.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để xử lý sự cố mạng khi gửi lệnh rút tiền cho ngân hàng bên thứ ba?
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Sự khác biệt giữa 2PC và TCC trong ngữ cảnh giao dịch tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Khi nào bạn nên dùng Message Queue so với gRPC trong Microservices tài chính?
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Ưu điểm và nhược điểm của việc lưu trữ giá tiền dưới dạng số nguyên (integer) so với thập phân (decimal).
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách bạn triển khai Rate Limiting để bảo vệ các API giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Nêu các rủi ro bảo mật chính trong hệ thống thanh toán và cách giảm thiểu.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Mô tả một lần bạn xử lý một lỗi nghiêm trọng liên quan đến tính nhất quán dữ liệu.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế cơ sở dữ liệu cho hệ thống ví điện tử đơn giản.
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Thiết kế hệ thống giỏ hàng và làm thế nào để xử lý session/tài khoản.
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Làm thế nào để xử lý việc đặt hàng quá tải (overselling) khi flash sale?
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Sự khác biệt giữa Monolith và Microservices trong một sàn thương mại điện tử.
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Xử lý việc phân loại và tìm kiếm sản phẩm trên hàng triệu SKU.
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Giải thích về Eventual Consistency và nó áp dụng cho những phần nào trong E-commerce.
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Cách bạn thiết kế hệ thống gợi ý sản phẩm đơn giản (recommendation engine).
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Tại sao cần dùng caching và bạn cache những gì trong backend E-commerce?
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Mô tả luồng xử lý đơn hàng từ khi click 'Thanh toán' đến khi hoàn tất.
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Lợi ích của việc sử dụng các ngôn ngữ lập trình tĩnh (statically-typed) cho backend E-commerce.
+Kỹ sư Phần mềm (Backend),Thương mại điện tử,Giải thích về kỹ thuật Sharding và khi nào áp dụng cho CSDL sản phẩm.
+Kỹ sư DevOps,Y tế/HealthTech,Giải thích về các tiêu chuẩn bảo mật dữ liệu y tế (ví dụ: HIPAA, GDPR).
+Kỹ sư DevOps,Y tế/HealthTech,Cách triển khai cơ chế Rollback an toàn cho một ứng dụng sức khỏe (Health App).
+Kỹ sư DevOps,Y tế/HealthTech,Thiết kế CI/CD pipeline cho hệ thống đa môi trường (dev, staging, production).
+Kỹ sư DevOps,Y tế/HealthTech,Làm thế nào để giám sát và cảnh báo về hiệu suất của các API truy xuất hồ sơ bệnh nhân?
+Kỹ sư DevOps,Y tế/HealthTech,Sự khác biệt giữa IaaS, PaaS, SaaS và ứng dụng trong HealthTech.
+Kỹ sư DevOps,Y tế/HealthTech,Làm thế nào để đảm bảo tính sẵn sàng cao (HA) cho một hệ thống lưu trữ hồ sơ điện tử (EHR).
+Kỹ sư DevOps,Y tế/HealthTech,Mô tả quy trình sao lưu và phục hồi thảm họa (Disaster Recovery) của bạn.
+Kỹ sư DevOps,Y tế/HealthTech,Tầm quan trọng của Infrastructure as Code (IaC) trong lĩnh vực y tế.
+Kỹ sư DevOps,Y tế/HealthTech,Sử dụng Prometheus và Grafana để theo dõi những metric quan trọng nào trong HealthTech.
+Kỹ sư DevOps,Y tế/HealthTech,Cách bạn tự động hóa quy trình vá lỗi bảo mật (security patching) trên các servers.
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Giải thích về thuật toán PageRank và các biến thể của nó.
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Cách bạn xử lý dữ liệu người dùng khổng lồ theo thời gian thực (real-time).
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Sự khác biệt giữa Data Lake, Data Warehouse và Data Mart.
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Bạn sẽ dùng mô hình nào để dự đoán xu hướng lan truyền (virality) của một bài đăng?
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Trình bày các bước bạn thực hiện để làm sạch và tiền xử lý dữ liệu văn bản.
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Mô tả về A/B Testing và cách bạn xử lý trường hợp kết quả không có ý nghĩa thống kê.
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Khi nào bạn nên chọn Python thay vì R trong phân tích dữ liệu?
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Giải thích về khái niệm Bias và Variance trong Machine Learning.
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Làm thế nào để đánh giá chất lượng của một mô hình phân loại (classification model).
+Phân tích Dữ liệu,Truyền thông/Mạng xã hội,Cách bạn xây dựng một mô hình gợi ý kết nối bạn bè (Friend Recommendation).
+Kỹ sư QA/Tester,Gaming,Giải thích sự khác biệt giữa Alpha Testing, Beta Testing và Stress Testing.
+Kỹ sư QA/Tester,Gaming,Cách bạn thiết kế các trường hợp kiểm thử cho chức năng Multi-player trong game.
+Kỹ sư QA/Tester,Gaming,Tầm quan trọng của việc kiểm thử hiệu suất (Performance Testing) trong ngành game.
+Kỹ sư QA/Tester,Gaming,Làm thế nào để kiểm thử tính công bằng (fairness) của hệ thống loot box hoặc gacha.
+Kỹ sư QA/Tester,Gaming,Mô tả cách bạn sử dụng automation testing cho giao diện người dùng (UI) phức tạp của game.
+Kỹ sư QA/Tester,Gaming,Kỹ thuật kiểm thử nào bạn sử dụng để phát hiện Memory Leaks.
+Kỹ sư QA/Tester,Gaming,Giải thích về Test Pyramid và cách áp dụng nó trong phát triển game.
+Kỹ sư QA/Tester,Gaming,Làm thế nào để kiểm thử các bản cập nhật lớn của game mà không ảnh hưởng đến người dùng hiện tại.
+Kỹ sư QA/Tester,Gaming,So sánh giữa White Box Testing và Black Box Testing.
+Kỹ sư QA/Tester,Gaming,Kể về một lần bạn phát hiện ra một bug nghiêm trọng mà không phải ai cũng thấy.

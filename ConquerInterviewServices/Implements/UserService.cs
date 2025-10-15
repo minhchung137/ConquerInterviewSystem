@@ -81,5 +81,16 @@ namespace ConquerInterviewServices.Implements
                 Roles = user.Roles?.Select(r => r.RoleName).ToList() ?? new List<string>()
             };
         }
+        public UserResponse UpdateUserRole(UpdateUserRoleRequest request)
+        {
+            var existing = _userRepository.GetUserById(request.UserId);
+            if (existing == null)
+                throw new AppException(AppErrorCode.UserNotFound);
+
+            _userRepository.UpdateUserRole(request.UserId, request.RoleName);
+
+            var updatedUser = _userRepository.GetUserById(request.UserId);
+            return MapToUserResponse(updatedUser);
+        }
     }
 }
