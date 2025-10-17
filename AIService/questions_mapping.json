@@ -1,0 +1,57 @@
+{
+  "Kỹ sư Phần mềm (Backend)_Tài chính/Fintech": [
+    "Giải thích về Idempotency và vai trò trong giao dịch tiền tệ.",
+    "Mô tả cách bạn thiết kế hệ thống sổ cái (ledger system) bất biến.",
+    "Làm thế nào để xử lý sự cố mạng khi gửi lệnh rút tiền cho ngân hàng bên thứ ba?",
+    "Sự khác biệt giữa 2PC và TCC trong ngữ cảnh giao dịch tài chính.",
+    "Khi nào bạn nên dùng Message Queue so với gRPC trong Microservices tài chính?",
+    "Ưu điểm và nhược điểm của việc lưu trữ giá tiền dưới dạng số nguyên (integer) so với thập phân (decimal).",
+    "Cách bạn triển khai Rate Limiting để bảo vệ các API giao dịch.",
+    "Nêu các rủi ro bảo mật chính trong hệ thống thanh toán và cách giảm thiểu.",
+    "Mô tả một lần bạn xử lý một lỗi nghiêm trọng liên quan đến tính nhất quán dữ liệu.",
+    "Thiết kế cơ sở dữ liệu cho hệ thống ví điện tử đơn giản."
+  ],
+  "Kỹ sư Phần mềm (Backend)_Thương mại điện tử": [
+    "Thiết kế hệ thống giỏ hàng và làm thế nào để xử lý session/tài khoản.",
+    "Làm thế nào để xử lý việc đặt hàng quá tải (overselling) khi flash sale?",
+    "Sự khác biệt giữa Monolith và Microservices trong một sàn thương mại điện tử.",
+    "Xử lý việc phân loại và tìm kiếm sản phẩm trên hàng triệu SKU.",
+    "Giải thích về Eventual Consistency và nó áp dụng cho những phần nào trong E-commerce.",
+    "Cách bạn thiết kế hệ thống gợi ý sản phẩm đơn giản (recommendation engine).",
+    "Tại sao cần dùng caching và bạn cache những gì trong backend E-commerce?",
+    "Mô tả luồng xử lý đơn hàng từ khi click 'Thanh toán' đến khi hoàn tất.",
+    "Lợi ích của việc sử dụng các ngôn ngữ lập trình tĩnh (statically-typed) cho backend E-commerce.",
+    "Giải thích về kỹ thuật Sharding và khi nào áp dụng cho CSDL sản phẩm."
+  ],
+  "Kỹ sư DevOps_Y tế/HealthTech": [
+    "Cách triển khai cơ chế Rollback an toàn cho một ứng dụng sức khỏe (Health App).",
+    "Làm thế nào để giám sát và cảnh báo về hiệu suất của các API truy xuất hồ sơ bệnh nhân?",
+    "Làm thế nào để đảm bảo tính sẵn sàng cao (HA) cho một hệ thống lưu trữ hồ sơ điện tử (EHR).",
+    "Mô tả quy trình sao lưu và phục hồi thảm họa (Disaster Recovery) của bạn.",
+    "Tầm quan trọng của Infrastructure as Code (IaC) trong lĩnh vực y tế.",
+    "Sử dụng Prometheus và Grafana để theo dõi những metric quan trọng nào trong HealthTech.",
+    "Cách bạn tự động hóa quy trình vá lỗi bảo mật (security patching) trên các servers."
+  ],
+  "Phân tích Dữ liệu_Truyền thông/Mạng xã hội": [
+    "Giải thích về thuật toán PageRank và các biến thể của nó.",
+    "Cách bạn xử lý dữ liệu người dùng khổng lồ theo thời gian thực (real-time).",
+    "Bạn sẽ dùng mô hình nào để dự đoán xu hướng lan truyền (virality) của một bài đăng?",
+    "Trình bày các bước bạn thực hiện để làm sạch và tiền xử lý dữ liệu văn bản.",
+    "Mô tả về A/B Testing và cách bạn xử lý trường hợp kết quả không có ý nghĩa thống kê.",
+    "Khi nào bạn nên chọn Python thay vì R trong phân tích dữ liệu?",
+    "Giải thích về khái niệm Bias và Variance trong Machine Learning.",
+    "Làm thế nào để đánh giá chất lượng của một mô hình phân loại (classification model).",
+    "Cách bạn xây dựng một mô hình gợi ý kết nối bạn bè (Friend Recommendation)."
+  ],
+  "Kỹ sư QA/Tester_Gaming": [
+    "Cách bạn thiết kế các trường hợp kiểm thử cho chức năng Multi-player trong game.",
+    "Tầm quan trọng của việc kiểm thử hiệu suất (Performance Testing) trong ngành game.",
+    "Làm thế nào để kiểm thử tính công bằng (fairness) của hệ thống loot box hoặc gacha.",
+    "Mô tả cách bạn sử dụng automation testing cho giao diện người dùng (UI) phức tạp của game.",
+    "Kỹ thuật kiểm thử nào bạn sử dụng để phát hiện Memory Leaks.",
+    "Giải thích về Test Pyramid và cách áp dụng nó trong phát triển game.",
+    "Làm thế nào để kiểm thử các bản cập nhật lớn của game mà không ảnh hưởng đến người dùng hiện tại.",
+    "So sánh giữa White Box Testing và Black Box Testing.",
+    "Kể về một lần bạn phát hiện ra một bug nghiêm trọng mà không phải ai cũng thấy."
+  ]
+}

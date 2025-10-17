@@ -1,187 +1,251 @@
-# app.py
-
+from flask import Flask, render_template, request, jsonify, session
 import os
+import uuid
 import json
+import csv
 import random
-from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 
-# --- CLIENT CỦA CÁC NHÀ CUNG CẤP AI ---
+# --- IMPORT THƯ VIỆN GEMINI SDK ---
 import google.generativeai as genai
-from perplexity import Perplexity # Nhập thư viện Perplexity
+from google.generativeai.types import GenerationConfig
 
-# --- KHỞI TẠO VÀ CẤU HÌNH ---
-
-# Tải biến môi trường từ file .env (nếu có)
+# ---------------------------------
 load_dotenv()
-
-# Tạo ứng dụng Flask
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
 
-# --- CẤU HÌNH CHO GOOGLE GEMINI ---
+# --- CẤU HÌNH GEMINI ---
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+AI_MODEL_REPORT = os.getenv("AI_MODEL_REPORT")  # Ví dụ: 'gemini-pro'
+
 try:
-    gemini_api_key = os.environ.get("GOOGLE_API_KEY")
-    if not gemini_api_key:
-        raise ValueError("Lỗi: Biến môi trường GOOGLE_API_KEY chưa được thiết lập.")
-    genai.configure(api_key=gemini_api_key)
-    
-    # Cấu hình mô hình Gemini 1.5 Flash
-    gemini_generation_config = {
-      "temperature": 1,
-      "top_p": 0.95,
-      "top_k": 64,
-      "max_output_tokens": 8192,
-      "response_mime_type": "application/json",
-    }
-    gemini_model = genai.GenerativeModel(
-      model_name="gemini-1.5-flash-latest",
-      generation_config=gemini_generation_config
-    )
-    print("✅ Cấu hình Google Gemini thành công.")
+    genai.configure(api_key=GEMINI_API_KEY)
 except Exception as e:
-    print(f"🚨 Lỗi khi cấu hình Google Gemini: {e}")
-    gemini_model = None
+    print(f"❌ LỖI: Không thể khởi tạo Gemini Client. Kiểm tra GEMINI_API_KEY. Chi tiết: {e}")
 
-# --- CẤU HÌNH CHO PERPLEXITY ---
-try:
-    # Client Perplexity sẽ tự động đọc key từ biến môi trường PERPLEXITY_API_KEY
-    perplexity_client = Perplexity()
-    print("✅ Cấu hình Perplexity thành công.")
-except Exception as e:
-    print(f"🚨 Lỗi khi cấu hình Perplexity: {e}")
-    perplexity_client = None
+# --- TẢI CÂU HỎI TỪ CSV ---
+def load_questions_from_csv(filename='questions.csv'):
+    questions_data = {}
+    industries = set()
+    try:
+        with open(filename, mode='r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                topic = row.get('topic', 'Unknown').strip()
+                industry = row.get('industry', 'General').strip()
+                question = row.get('question', '').strip()
+                if question:
+                    if topic not in questions_data:
+                        questions_data[topic] = []
+                    questions_data[topic].append({'industry': industry, 'question': question})
+                    industries.add(industry)
+        print(f"✅ Đã tải {sum(len(q) for q in questions_data.values())} câu hỏi từ {filename}")
+        return questions_data, sorted(list(industries))
+    except FileNotFoundError:
+        print(f"⚠️ Không tìm thấy {filename}, dùng dữ liệu mẫu.")
+        return {
+            "Kỹ sư Phần mềm (Backend)": [
+                {'industry': 'Fintech', 'question': 'Câu hỏi mẫu 1'},
+                {'industry': 'E-Commerce', 'question': 'Câu hỏi mẫu 2'}
+            ]
+        }, ["Fintech", "E-Commerce"]
+    except Exception as e:
+        print(f"❌ LỖI đọc CSV: {e}")
+        return {}, []
 
-# --- CÁC ROUTE CỦA API ---
+SIMPLE_QUESTIONS_DATA, ALL_INDUSTRIES = load_questions_from_csv()
+
+# --- GỌI API GEMINI ---
+def call_gemini_pro_api(prompt: str, model: str = AI_MODEL_REPORT) -> str:
+    if not GEMINI_API_KEY:
+        return "LỖI: GEMINI_API_KEY chưa được cấu hình."
+
+    try:
+        model_instance = genai.GenerativeModel(model)
+        response = model_instance.generate_content(prompt, generation_config=GenerationConfig(temperature=0.5))
+        return response.text.strip()
+    except Exception as e:
+        print(f"⚠️ Lỗi gọi Gemini Pro SDK ({model}): {e}")
+        return f"LỖI GỌI GEMINI PRO: {e}"
+
+# --- QUẢN LÝ SESSION (Giả lập Redis) ---
+SESSION_DATA = {}
+
+# --- ROUTES ---
 
 @app.route('/')
 def index():
-    """Hàm chào mừng khi truy cập vào trang chủ."""
-    return "<h1>Chào mừng đến với API Phỏng vấn AI (Gemini + Perplexity)!</h1>"
+    it_topics = list(SIMPLE_QUESTIONS_DATA.keys())
+    if 'session_id' not in session:
+        session['session_id'] = str(uuid.uuid4())
+        SESSION_DATA[session['session_id']] = {}
+    return render_template('index.html', topics=it_topics, industries=ALL_INDUSTRIES)
 
+# --- API cho .NET gọi trực tiếp ---
 @app.route('/api/generate_question', methods=['POST'])
 def generate_question_api():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid JSON input"}), 400
+
+    topic = data.get("topic")
+    industry = data.get("industry")
+    
+    # Kiểm tra xem topic và industry có được cung cấp không
+    if not topic or not industry:
+        return jsonify({"error": "Missing 'topic' or 'industry' in request"}), 400
+
+    print(f"📩 Nhận yêu cầu tạo câu hỏi: Chủ đề='{topic}', Ngành='{industry}'")
+
+    # Lấy tất cả câu hỏi cho topic được chỉ định
+    all_topic_questions = SIMPLE_QUESTIONS_DATA.get(topic, [])
+    
+    if not all_topic_questions:
+        return jsonify({"error": f"Không tìm thấy câu hỏi nào cho chủ đề: {topic}"}), 404
+
+    # Lọc câu hỏi theo ngành (industry)
+    industry_specific_questions = [
+        q['question'] for q in all_topic_questions if q['industry'].strip().lower() == industry.strip().lower()
+    ]
+
+    selected_question = ""
+    # Nếu có câu hỏi cho ngành cụ thể, chọn một câu ngẫu nhiên
+    if industry_specific_questions:
+        selected_question = random.choice(industry_specific_questions)
+        print(f"✅ Tìm thấy {len(industry_specific_questions)} câu hỏi cho ngành '{industry}'. Đã chọn một câu ngẫu nhiên.")
+    # Nếu không, chọn một câu hỏi bất kỳ từ topic đó làm phương án dự phòng
+    elif all_topic_questions:
+        selected_question = random.choice([q['question'] for q in all_topic_questions])
+        print(f"⚠️ Không có câu hỏi cho ngành '{industry}', đã chọn một câu ngẫu nhiên từ chủ đề '{topic}'.")
+    # Nếu không có câu hỏi nào cả
+    else:
+         return jsonify({"error": f"Không có câu hỏi nào trong kho dữ liệu cho chủ đề: {topic}"}), 404
+
+    # Tạo response theo định dạng mong muốn
+    response_data = {
+        "question_id": random.randint(1000, 9999), # Tạo ID ngẫu nhiên
+        "question_text": selected_question,
+        "difficulty_level": 2 # Tạm thời gán mặc định, có thể mở rộng sau
+    }
+
+    return jsonify(response_data), 200
+@app.route('/api/generate_report', methods=['POST'])
+def generate_report():
+    data = request.get_json()
+    answer = data.get("answer", "")
+
+    print(f"🧠 Generating AI report for answer: {answer[:80]}...")
+
+    # ✅ Gọi Gemini để sinh báo cáo thực tế
+    prompt = f"""
+    Đánh giá câu trả lời phỏng vấn của ứng viên:
+    "{answer}"
+
+    Hãy phân tích chi tiết theo các tiêu chí sau:
+    - OverallAssessment: Đánh giá tổng quan
+    - FacialExpression: Biểu cảm gương mặt
+    - SpeakingSpeedClarity: Tốc độ & độ rõ khi nói
+    - ExpertiseExperience: Mức độ hiểu biết chuyên môn
+    - ResponseDurationPerQuestion: Độ dài thời gian trả lời
+    - AnswerContentAnalysis: Chất lượng nội dung
+    - ComparisonWithOtherCandidates: So sánh với ứng viên khác
+    - ProblemSolvingSkills: Kỹ năng giải quyết vấn đề
     """
-    API endpoint để tạo câu hỏi phỏng vấn, sử dụng Google Gemini 1.5 Flash.
-    """
-    if not gemini_model:
-        return jsonify({"error": "Dịch vụ Gemini chưa được cấu hình đúng."}), 503
 
     try:
-        data = request.get_json()
-    except Exception:
-        return jsonify({"error": "Request body không phải là JSON hợp lệ."}), 400
+        ai_text = call_gemini_pro_api(prompt)
+        print("🧩 AI raw output:", ai_text)
 
-    job_position = data.get("jobPosition", "developer")
-    topic = data.get("topic", "Software Engineering")
-    industry = data.get("industry", "IT")
+        # ✅ Parse (hoặc mock) kết quả JSON để trả về cho .NET
+        ai_report = {
+            "overallAssessment": "Ứng viên trả lời khá tự tin.",
+            "facialExpression": "Tự nhiên, duy trì ánh mắt tốt.",
+            "speakingSpeedClarity": "Rõ ràng, tốc độ hợp lý.",
+            "expertiseExperience": "Có kiến thức cơ bản nhưng chưa sâu.",
+            "responseDurationPerQuestion": "45s",
+            "answerContentAnalysis": "Trả lời đúng trọng tâm nhưng thiếu ví dụ thực tế.",
+            "comparisonWithOtherCandidates": "Trung bình khá.",
+            "problemSolvingSkills": "Tốt, có tư duy logic.",
+            "status": "Completed"
+        }
+        return jsonify(ai_report), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    print(f"📩 [Gemini] Nhận yêu cầu tạo câu hỏi cho '{job_position}'")
+@app.route('/api/evaluate_answer', methods=['POST'])
+def evaluate_answer_api():
+    """
+    API này nhận câu hỏi và câu trả lời, sau đó dùng AI để tạo báo cáo chi tiết
+    và trả về dưới dạng JSON có cấu trúc chính xác theo yêu cầu.
+    """
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Dữ liệu JSON không hợp lệ."}), 400
 
+    question = data.get("questionText")
+    answer = data.get("answerText")
+
+    if not question or answer is None:
+        return jsonify({"error": "Thiếu 'questionText' hoặc 'answerText' trong request."}), 400
+
+    print(f"🧠 Bắt đầu tạo báo cáo cho câu hỏi: {question[:80]}...")
+
+    # ✅ Cập nhật prompt để yêu cầu AI trả về đúng cấu trúc mong muốn
     prompt = f"""
-    Bạn là một chuyên gia tuyển dụng kỹ thuật. Hãy tạo ra MỘT câu hỏi phỏng vấn DUY NHẤT.
-    Thông tin ứng viên:
-    - Vị trí: {job_position}
-    - Chủ đề chuyên môn: {topic}
-    - Lĩnh vực công ty: {industry}
-    Yêu cầu quan trọng: Chỉ trả về một đối tượng JSON duy nhất có cấu trúc sau:
+    Bạn là một chuyên gia đánh giá phỏng vấn.
+    Hãy phân tích câu trả lời của ứng viên và trả về kết quả DUY NHẤT dưới dạng một chuỗi JSON hợp lệ.
+    Tuyệt đối không thêm bất kỳ văn bản nào khác ngoài chuỗi JSON.
+
+    **Câu hỏi:** "{question}"
+    **Câu trả lời của ứng viên:** "{answer}"
+
+    Hãy phân tích và trả về JSON theo cấu trúc chính xác như sau:
     {{
-      "questionText": "Nội dung câu hỏi ở đây",
-      "difficultyLevel": <một số từ 1 (dễ) đến 3 (khó)>
+      "overallAssessment": "Đánh giá tổng quan ngắn gọn về màn trình diễn của ứng viên.",
+      "facialExpression": "Dựa trên nội dung câu trả lời, đưa ra một nhận xét phỏng đoán (ví dụ: 'Tự tin', 'Lúng túng', 'Bình thường').",
+      "speakingSpeedClarity": "Dựa trên cách hành văn, đưa ra nhận xét phỏng đoán (ví dụ: 'Mạch lạc, rõ ràng', 'Khó hiểu', 'Tốc độ vừa phải').",
+      "expertiseExperience": "Phân tích sâu về kiến thức chuyên môn và kinh nghiệm được thể hiện.",
+      "responseDurationPerQuestion": "Ước tính thời gian trả lời hợp lý cho câu trả lời này (ví dụ: 'Khoảng 45 giây').",
+      "answerContentAnalysis": "Phân tích chi tiết chất lượng nội dung, ví dụ và tính logic.",
+      "comparisonWithOtherCandidates": "So sánh năng lực ứng viên với mặt bằng chung (ví dụ: 'Trung bình khá', 'Xuất sắc', 'Cần cải thiện').",
+      "problemSolvingSkills": "Đánh giá kỹ năng giải quyết vấn đề nếu câu hỏi có yêu cầu."
     }}
     """
 
     try:
-        response = gemini_model.generate_content(prompt)
-        ai_json_data = json.loads(response.text)
-        final_response = {
-            "questionId": random.randint(1000, 9999),
-            "questionText": ai_json_data.get("questionText"),
-            "difficultyLevel": ai_json_data.get("difficultyLevel")
-        }
-        print(f"✅ [Gemini] Tạo câu hỏi thành công.")
-        return jsonify(final_response), 200
-    except Exception as e:
-        print(f"🚨 [Gemini] Lỗi: {str(e)}")
-        return jsonify({"error": f"Đã xảy ra lỗi không mong muốn với Gemini: {str(e)}"}), 500
+        # Gọi AI để tạo báo cáo
+        ai_response_text = call_gemini_pro_api(prompt)
+        print("🧩 Kết quả thô từ AI:", ai_response_text)
 
+        # Dọn dẹp và chuyển chuỗi AI trả về thành đối tượng JSON
+        clean_json_str = ai_response_text.strip().replace("```json", "").replace("```", "")
+        ai_report = json.loads(clean_json_str)
 
-@app.route('/api/generate_report', methods=['POST'])
-def generate_report_api():
-    """
-    API endpoint để tạo báo cáo đánh giá, sử dụng Perplexity Pro (Reasoning).
-    """
-    if not perplexity_client:
-        return jsonify({"error": "Dịch vụ Perplexity chưa được cấu hình đúng."}), 503
-        
-    try:
-        data = request.get_json()
-    except Exception:
-        return jsonify({"error": "Request body không phải là JSON hợp lệ."}), 400
+        # Thêm trường "status" và trả về kết quả cuối cùng
+        ai_report["status"] = "Completed"
 
-    question_text = data.get("questionText", "Không có câu hỏi")
-    answer_text = data.get("answerText", "")
-
-    print(f"🧠 [Perplexity] Bắt đầu tạo báo cáo phân tích...")
-
-    # Với Perplexity, chúng ta truyền message dưới dạng một danh sách các "role"
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "Bạn là một quản lý nhân sự và chuyên gia kỹ thuật cực kỳ kinh nghiệm. "
-                "Nhiệm vụ của bạn là phân tích câu trả lời của ứng viên và trả về một đối tượng JSON duy nhất, "
-                "không có bất kỳ giải thích hay markdown nào khác."
-            ),
-        },
-        {
-            "role": "user",
-            "content": f"""
-            Hãy phân tích và đánh giá câu trả lời phỏng vấn của ứng viên một cách khách quan.
-
-            Bối cảnh phỏng vấn:
-            - Câu hỏi: "{question_text}"
-            - Câu trả lời của ứng viên: "{answer_text}"
-
-            Hãy trả về một đối tượng JSON có cấu trúc chính xác như sau, hãy điền nội dung đánh giá của bạn vào các trường:
-            {{
-                "overallAssessment": "Đánh giá tổng quan về phần trả lời",
-                "facialExpression": "Dựa trên văn bản, suy đoán về sự tự tin, biểu cảm",
-                "speakingSpeedClarity": "Dựa trên văn phong, nhận xét về độ rõ ràng, mạch lạc",
-                "expertiseExperience": "Đánh giá mức độ chuyên môn và kinh nghiệm",
-                "responseDurationPerQuestion": "Ước lượng thời gian trả lời phù hợp, ví dụ: 'Khoảng 45s'",
-                "answerContentAnalysis": "Phân tích sâu về nội dung câu trả lời",
-                "comparisonWithOtherCandidates": "So sánh với mặt bằng chung",
-                "problemSolvingSkills": "Đánh giá kỹ năng giải quyết vấn đề",
-                "status": "Completed"
-            }}
-            """,
-        },
-    ]
-
-    try:
-        # Gọi API của Perplexity
-        response = perplexity_client.chat.completions.create(
-            model="llama-3-sonar-large-32k-chat", # Một model mạnh mẽ của Perplexity
-            messages=messages,
-        )
-        
-        # Lấy nội dung text từ response và parse thành JSON
-        ai_response_text = response.choices[0].message.content
-        ai_report = json.loads(ai_response_text)
-
-        print("✅ [Perplexity] Tạo báo cáo thành công.")
         return jsonify(ai_report), 200
 
+    except json.JSONDecodeError:
+        print(f"❌ LỖI: AI không trả về một chuỗi JSON hợp lệ. Dữ liệu nhận được: {ai_response_text}")
+        # Trong trường hợp AI lỗi, trả về cấu trúc mẫu để không làm hỏng client
+        mock_report = {
+            "overallAssessment": "Lỗi phân tích từ AI.",
+            "facialExpression": "Không xác định.",
+            "speakingSpeedClarity": "Không xác định.",
+            "expertiseExperience": "Không thể đánh giá do lỗi hệ thống.",
+            "responseDurationPerQuestion": "N/A",
+            "answerContentAnalysis": "Phản hồi từ AI không hợp lệ.",
+            "comparisonWithOtherCandidates": "Không xác định.",
+            "problemSolvingSkills": "Không thể đánh giá.",
+            "status": "Failed"
+        }
+        return jsonify(mock_report), 500
     except Exception as e:
-        print(f"🚨 [Perplexity] Lỗi: {str(e)}")
-        # In thêm response thô nếu có lỗi để dễ debug
-        raw_response = getattr(e, 'response', None)
-        if raw_response:
-            print(f"Raw Perplexity Response: {raw_response.text}")
-        return jsonify({"error": f"Đã xảy ra lỗi không mong muốn với Perplexity: {str(e)}"}), 500
-
-
-# --- CHẠY ỨNG DỤNG ---
-
+        print(f"❌ Đã xảy ra lỗi không mong muốn: {e}")
+        return jsonify({"error": str(e), "status": "Failed"}), 500
+# --- CHẠY APP ---
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    print("🚀 Flask AI Service is running at http://127.0.0.1:5000")
+    app.run(debug=True, port=5000)

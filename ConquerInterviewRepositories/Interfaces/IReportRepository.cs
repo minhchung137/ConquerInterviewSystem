@@ -9,7 +9,7 @@ namespace ConquerInterviewRepositories.Interfaces
 {
     public interface IReportRepository
     {
-        Task<ReportQuestion> GenerateAIReportAsync(InterviewAnswer answer);
+        Task<ReportQuestion> GenerateAIReportAsync(InterviewAnswer answer, string question);
         Task<List<ReportQuestion>> GetReportsBySessionAsync(int sessionId);
     }
 }

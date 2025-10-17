@@ -1,4 +1,5 @@
-﻿using ConquerInterviewBO.Models;
+﻿using ConquerInterviewBO.DTOs.Requests;
+using ConquerInterviewBO.Models;
 using ConquerInterviewDAO;
 using ConquerInterviewRepositories.Interfaces;
 using System;
@@ -18,8 +19,8 @@ namespace ConquerInterviewRepositories.Implements
             _context = context;
         }
 
-        public Task<ReportQuestion> GenerateAIReportAsync(InterviewAnswer answer)
-            => ReportDAO.Instance.GenerateAIReportAsync(answer);
+        public Task<ReportQuestion> GenerateAIReportAsync(InterviewAnswer answer, string question)
+            => ReportDAO.Instance.GenerateAIReportAsync(answer, question);
 
         public Task<List<ReportQuestion>> GetReportsBySessionAsync(int sessionId)
             => ReportDAO.Instance.GetReportsBySessionAsync(sessionId);
