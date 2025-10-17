@@ -1,4 +1,5 @@
-﻿using ConquerInterviewBO.Models;
+﻿using ConquerInterviewBO.DTOs.Requests;
+using ConquerInterviewBO.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -31,22 +32,31 @@ namespace ConquerInterviewDAO
                 _context = new ConquerInterviewDbContext();
             }
 
-            public async Task<ReportQuestion> GenerateAIReportAsync(InterviewAnswer answer)
+            public async Task<ReportQuestion> GenerateAIReportAsync(InterviewAnswer answer, string question)
             {
                 using var client = new HttpClient();
 
-                // Gửi answer đến Flask
-                var payload = new { answer = answer.TextAnswer ?? string.Empty };
-                var response = await client.PostAsJsonAsync("http://localhost:5000/api/generate_report", payload);
+            // Gửi answer đến Flask
+            var payload = new
+            {
+                questionText = question, // Thêm dòng này
+                answerText = answer.TextAnswer ?? string.Empty
+            };
+            var response = await client.PostAsJsonAsync("http://localhost:5000/api/evaluate_answer", payload);
 
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception($"AI service returned {response.StatusCode}");
+            if (!response.IsSuccessStatusCode)
+            {
+                // Thêm log để xem chi tiết lỗi từ Flask
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"[ERROR] AI service returned {response.StatusCode}. Content: {errorContent}");
+                throw new Exception($"AI service returned {response.StatusCode}");
+            }
 
-                var json = await response.Content.ReadAsStringAsync();
-                Console.WriteLine("📄 AI Report JSON: " + json);
+            var json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("📄 AI Report JSON: " + json);
 
-                // Parse JSON an toàn
-                AIReportResponse aiReport = null;
+            // Parse JSON an toàn
+            AIReportResponse aiReport = null;
                 try
                 {
                     aiReport = JsonSerializer.Deserialize<AIReportResponse>(json,

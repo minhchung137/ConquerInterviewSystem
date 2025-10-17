@@ -10,6 +10,7 @@ namespace ConquerInterviewBO.DTOs.Requests
     {
         public int SessionId { get; set; }
         public int QuestionId { get; set; }
+        public string QuestionText { get; set; } = string.Empty;
         public string AnswerText { get; set; } = string.Empty;
     }
 }

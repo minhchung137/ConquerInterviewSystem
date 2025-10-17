@@ -44,9 +44,9 @@ namespace ConquerInterviewDAO
                 throw new Exception("Interview session has ended or not started yet.");
 
             // ✅ 3️⃣ Kiểm tra question hợp lệ
-            var questionExists = await _context.Questions.AnyAsync(q => q.QuestionId == request.QuestionId);
+            var questionExists = await _context.Questions.AnyAsync(q => q.QuestionText == request.QuestionText);
             if (!questionExists)
-                throw new Exception($"Question ID {request.QuestionId} not found.");
+                throw new Exception($"Question ID {request.QuestionText} not found.");
 
             // ✅ 4️⃣ Tìm answer hiện có (SessionId + QuestionId)
             var existing = await _context.InterviewAnswers
