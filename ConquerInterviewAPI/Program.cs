@@ -100,6 +100,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(
+            builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyHeader()
+                       .AllowAnyMethod();
+            });
+    });
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -112,6 +122,7 @@ app.UseDeveloperExceptionPage();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthentication();
 
 //Custom error 403
