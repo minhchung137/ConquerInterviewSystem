@@ -33,7 +33,12 @@ namespace ConquerInterviewBO.Commons
         SessionNotFound = 3001,
         QuestionNotFound = 3002,
 
+        //plan
+        SubscriptionPlanNotFound = 4001,
+        PlanIsInactive = 4002,
+        OrderNotFound = 4003,
         // General
-        InternalError = 9000
+        InternalError = 9000,
+        
     }
 }

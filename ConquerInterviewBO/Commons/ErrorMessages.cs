@@ -30,7 +30,10 @@ namespace ConquerInterviewBO.Commons
             { AppErrorCode.InvalidToken, "Reset token is invalid or expired" },
             { AppErrorCode.TokenExpired, "The reset token has expired" },
             { AppErrorCode.RoleNotFound, "Specified role does not exist" },
-            { AppErrorCode.SessionExpired, "The interview session has expired" }
+            { AppErrorCode.SessionExpired, "The interview session has expired" },
+            { AppErrorCode.SubscriptionPlanNotFound, "Subscription plan not found"  },
+            { AppErrorCode.PlanIsInactive, "The subscription plan is inactive"  },
+            { AppErrorCode.OrderNotFound, "Order not found" }
         };
 
         public static string GetMessage(AppErrorCode code) =>
