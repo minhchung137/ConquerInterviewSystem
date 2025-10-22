@@ -126,8 +126,10 @@ namespace ConquerInterviewServices.Implements
             {
                 if (DateTime.UtcNow < session.StartTime.Value || DateTime.UtcNow > session.EndTime.Value)
                 {
+                    session.Status = "Expired"; // Cập nhật trạng thái nếu cần
+                    await _sessionRepo.UpdateSessionAsync(session); // Lưu thay đổi vào DB
                     _logger.LogWarning("Submit bị từ chối do hết hạn. Session ID: {SessionId}", request.SessionId);
-                    throw new AppException(AppErrorCode.ForbiddenAccess);
+                    throw new AppException(AppErrorCode.SessionExpired);
                 }
             }
 

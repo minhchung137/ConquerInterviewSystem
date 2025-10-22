@@ -29,7 +29,8 @@ namespace ConquerInterviewBO.Commons
             { AppErrorCode.ForbiddenAccess, "You do not have permission to access this resource" },
             { AppErrorCode.InvalidToken, "Reset token is invalid or expired" },
             { AppErrorCode.TokenExpired, "The reset token has expired" },
-            { AppErrorCode.RoleNotFound, "Specified role does not exist" }
+            { AppErrorCode.RoleNotFound, "Specified role does not exist" },
+            { AppErrorCode.SessionExpired, "The interview session has expired" }
         };
 
         public static string GetMessage(AppErrorCode code) =>
