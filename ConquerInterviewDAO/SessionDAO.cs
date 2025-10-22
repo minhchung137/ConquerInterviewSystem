@@ -35,7 +35,8 @@ namespace ConquerInterviewDAO
                 UserId = userId,
                 JobPosition = jobPosition,
                 StartTime = DateTime.UtcNow,
-                EndTime = DateTime.UtcNow.AddMinutes(durationMinutes)
+                EndTime = DateTime.UtcNow.AddMinutes(durationMinutes),
+                Status = "Active"
             };
 
             _context.InterviewSessions.Add(session);
@@ -81,6 +82,11 @@ namespace ConquerInterviewDAO
                 .Where(a => a.SessionId == sessionId)
                 .Select(a => a.Question)
                 .ToListAsync();
+        }
+        public async Task UpdateSessionAsync(InterviewSession session)
+        {
+            _context.InterviewSessions.Update(session);
+            await _context.SaveChangesAsync();
         }
     }
 }

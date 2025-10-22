@@ -245,6 +245,84 @@ def evaluate_answer_api():
     except Exception as e:
         print(f"❌ Đã xảy ra lỗi không mong muốn: {e}")
         return jsonify({"error": str(e), "status": "Failed"}), 500
+@app.route('/api/personalization', methods=['POST'])
+def personalize_path():
+    """
+    API này nhận vào một danh sách các báo cáo đánh giá
+    và trả về một lộ trình học tập cá nhân hóa do AI tạo ra.
+    """
+    data = request.get_json()
+    
+    # 1. Kiểm tra dữ liệu đầu vào
+    if not data or "reports" not in data:
+        return jsonify({"error": "Dữ liệu JSON không hợp lệ. Thiếu trường 'reports'."}), 400
+
+    user_reports = data.get("reports")
+    
+    if not isinstance(user_reports, list) or len(user_reports) == 0:
+        return jsonify({"error": "'reports' phải là một danh sách (list) và không được rỗng."}), 400
+
+    print(f"🧠 Bắt đầu tạo lộ trình cá nhân từ {len(user_reports)} báo cáo...")
+
+    # 2. Chuyển đổi danh sách báo cáo thành chuỗi JSON để đưa vào prompt
+    # ensure_ascii=False để giữ lại tiếng Việt
+    try:
+        reports_str = json.dumps(user_reports, indent=2, ensure_ascii=False)
+    except Exception as e:
+        return jsonify({"error": f"Lỗi khi xử lý dữ liệu báo cáo: {str(e)}"}), 400
+
+    # 3. Xây dựng prompt để yêu cầu AI tạo lộ trình
+    prompt = f"""
+    Bạn là một cố vấn kỹ thuật cao cấp, chuyên tạo ra các lộ trình học tập cá nhân hóa cho kỹ sư phần mềm.
+    
+    Dựa trên một loạt các báo cáo đánh giá phỏng vấn của ứng viên dưới đây:
+    ---
+    {reports_str}
+    ---
+
+    Hãy phân tích tổng hợp các báo cáo trên để tìm ra các điểm yếu cốt lõi và lỗ hổng kiến thức lặp đi lặp lại 
+    (đặc biệt chú ý đến các trường 'expertiseExperience', 'answerContentAnalysis' và 'problemSolvingSkills').
+
+    Sau đó, tạo ra một lộ trình học tập chi tiết (khoảng 3-5 bước) để giúp ứng viên cải thiện.
+
+    Trả về kết quả DUY NHẤT dưới dạng một chuỗi JSON hợp lệ, không có bất kỳ văn bản nào khác.
+    Chuỗi JSON này phải là một đối tượng có key là "personalizedPath".
+    Giá trị của "personalizedPath" phải là một danh sách (list) các bước học tập.
+    
+    Mỗi đối tượng trong danh sách phải có cấu trúc chính xác như sau:
+    {{
+      "NamePractice": "Tên chủ đề/kỹ năng cần luyện tập (ngắn gọn)",
+      "Practice": "Nội dung lý thuyết cần học hoặc phương pháp luyện tập (chi tiết 1-2 câu)",
+      "Exercise": "Một bài tập hoặc hành động cụ thể để áp dụng kiến thức (chi tiết 1-2 câu)",
+      "Objective": "Mục tiêu cần đạt được sau khi hoàn thành bước này (ngắn gọn)"
+    }}
+
+    Toàn bộ nội dung trong JSON phải bằng tiếng Việt.
+    """
+
+    try:
+        # 4. Gọi AI để tạo lộ trình
+        ai_response_text = call_gemini_pro_api(prompt)
+        print("🧩 Kết quả thô từ AI (lộ trình):", ai_response_text)
+
+        # 5. Dọn dẹp và chuyển chuỗi AI trả về thành đối tượng JSON
+        clean_json_str = ai_response_text.strip().replace("```json", "").replace("```", "")
+        ai_path_data = json.loads(clean_json_str)
+
+        # 6. Kiểm tra xem AI có trả về đúng cấu trúc không
+        if "personalizedPath" not in ai_path_data or not isinstance(ai_path_data.get("personalizedPath"), list):
+            print("❌ LỖI: AI không trả về JSON với key 'personalizedPath' là một danh sách.")
+            raise json.JSONDecodeError("AI response missing 'personalizedPath' key or it's not a list.", clean_json_str, 0)
+
+        # 7. Trả về kết quả thành công
+        return jsonify(ai_path_data), 200
+
+    except json.JSONDecodeError:
+        print(f"❌ LỖI: AI không trả về một chuỗi JSON lộ trình hợp lệ. Dữ liệu: {ai_response_text}")
+        return jsonify({"error": "Không thể phân tích phản hồi lộ trình từ AI. Vui lòng thử lại."}), 500
+    except Exception as e:
+        print(f"❌ Đã xảy ra lỗi không mong muốn khi tạo lộ trình: {e}")
+        return jsonify({"error": str(e), "status": "Failed"}), 500
 # --- CHẠY APP ---
 if __name__ == '__main__':
     print("🚀 Flask AI Service is running at http://127.0.0.1:5000")

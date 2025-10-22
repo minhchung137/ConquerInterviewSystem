@@ -70,6 +70,8 @@ builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IPersonalizationService, PersonalizationService>();
+builder.Services.AddScoped<IPersonalizationRepository, PersonalizationRepository>();
 
 
 //Setup JWT
