@@ -50,7 +50,8 @@ namespace ConquerInterviewDAO
             if (user == null)
                 throw new AppException(AppErrorCode.UserNotFound);
 
-            // cập nhật các trường cho phép (không thay password/email/username ở đây)
+            user.Username = updatedUser.Username;
+            user.Email = updatedUser.Email;
             user.FullName = updatedUser.FullName;
             user.PhoneNumber = updatedUser.PhoneNumber;
             user.DateOfBirth = updatedUser.DateOfBirth;

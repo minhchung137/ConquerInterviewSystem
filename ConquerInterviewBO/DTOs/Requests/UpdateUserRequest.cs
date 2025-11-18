@@ -9,6 +9,13 @@ namespace ConquerInterviewBO.DTOs.Requests
 {
     public class UpdateUserRequest
     {
+        [Required(ErrorMessage = "Username không được để trống")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Username phải từ 3 đến 50 ký tự")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "Email không được để trống")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string Email { get; set; }
         [Required(ErrorMessage = "Full name is required")]
         [StringLength(255, ErrorMessage = "Full name must be less than 255 characters")]
         public string? FullName { get; set; }

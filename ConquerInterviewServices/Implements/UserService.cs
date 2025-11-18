@@ -42,7 +42,8 @@ namespace ConquerInterviewServices.Implements
             var existing = _userRepository.GetUserById(userId);
             if (existing == null)
                 throw new AppException(AppErrorCode.UserNotFound);
-
+            existing.Username = request.Username;
+            existing.Email = request.Email;
             existing.FullName = request.FullName;
             existing.PhoneNumber = request.PhoneNumber;
             existing.DateOfBirth = request.DateOfBirth.HasValue ? DateOnly.FromDateTime(request.DateOfBirth.Value) : null;

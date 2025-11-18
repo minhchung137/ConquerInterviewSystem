@@ -3,6 +3,7 @@ using ConquerInterviewBO.Commons;
 using ConquerInterviewBO.DTOs.Requests;
 using ConquerInterviewBO.DTOs.Responses;
 using ConquerInterviewServices.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -28,6 +29,7 @@ namespace ConquerInterviewAPI.Controller
         /// Lấy tất cả các gói đăng ký
         /// </summary>
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllPlans()
         {
             _logger.LogInformation("[GET] /api/SubscriptionPlan");
