@@ -43,7 +43,7 @@ namespace ConquerInterviewDAO
                 .Include(u => u.Roles)
                 .FirstOrDefault(u => u.UserId == id && u.Status == true);
         }
-        // --- Update user ---
+        
         public void UpdateUser(User updatedUser)
         {
             var user = _context.Users.FirstOrDefault(u => u.UserId == updatedUser.UserId);
@@ -63,7 +63,7 @@ namespace ConquerInterviewDAO
             _context.SaveChanges();
         }
 
-        // --- Soft delete user ---
+        
         public void SoftDeleteUser(int userId)
         {
             var user = _context.Users
