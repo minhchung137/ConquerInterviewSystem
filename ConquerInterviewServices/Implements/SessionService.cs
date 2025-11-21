@@ -46,7 +46,7 @@ namespace ConquerInterviewServices.Implements
 
             // 2. Get random level=1 questions
             _logger.LogInformation("Đang lấy 4 câu hỏi ngẫu nhiên mức độ 1.");
-            var qList = await _questionRepo.GetRandomQuestionsAsync(4, 1);
+            var qList = await _questionRepo.GetRandomQuestionsAsync(request.QuestionEasy, 1);
             _logger.LogInformation("Lấy được {QuestionCount} câu hỏi từ DB.", qList.Count);
 
             // 3. Generate 1 AI-level2 question
@@ -54,11 +54,12 @@ namespace ConquerInterviewServices.Implements
             var aiQ = await _questionRepo.GenerateAIQuestionAsync(
                 request.Topic ?? "General",
                 request.Industry ?? "General",
-                request.JobPosition ?? "General"
+                request.JobPosition ?? "General",
+                request.QuestionDifficult
             );
-            _logger.LogInformation("Tạo câu hỏi AI thành công, Question ID: {QuestionId}", aiQ.QuestionId);
+            _logger.LogInformation("Tạo câu hỏi AI thành công, Question ID: {QuestionId}", aiQ.FirstOrDefault()?.QuestionId);
 
-            qList.Add(aiQ);
+            qList.AddRange(aiQ);
 
             // 4. Assign to session
             _logger.LogInformation("Đang gán {QuestionCount} câu hỏi cho Session ID: {SessionId}", qList.Count, session.SessionId);

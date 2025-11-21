@@ -10,6 +10,6 @@ namespace ConquerInterviewRepositories.Interfaces
     public interface IQuestionRepository
     {
         Task<List<Question>> GetRandomQuestionsAsync(int count, int level);
-        Task<Question> GenerateAIQuestionAsync(string topic, string industry, string jobPosition);
+        Task<List<Question>> GenerateAIQuestionAsync(string topic, string industry, string jobPosition, int QuestionDifficult);
     }
 }
