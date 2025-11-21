@@ -18,6 +18,13 @@ namespace ConquerInterviewRepositories.Implements
 
         public async Task<List<Personalization>> CreatePersonalizationAsync(int customerId, int reportQId, List<ReportDTO> reports)
         {
+            bool isReportExist = await PersonalizationDAO.Instance.CheckReportQuestionExistsAsync(reportQId);
+
+            if (!isReportExist)
+            {
+                // Ném ra lỗi để Controller bắt được và trả về thông báo dễ hiểu cho Frontend
+                throw new Exception($"Lỗi dữ liệu: ReportQId '{reportQId}' không tồn tại trong hệ thống. Vui lòng kiểm tra lại quy trình tạo Report.");
+            }
             // 1. Gọi Python AI qua DAO
             var aiResponse = await PersonalizationDAO.Instance.CallAIPersonalizationAsync(reports);
 

@@ -32,7 +32,12 @@ namespace ConquerInterviewDAO
         {
             _context = new ConquerInterviewDbContext();
         }
-
+        public async Task<bool> CheckReportQuestionExistsAsync(int reportQId)
+        {
+            // Kiểm tra trong bảng ReportQuestions xem ID có tồn tại không
+            // Lưu ý: Đảm bảo DbContext của bạn có DbSet<ReportQuestion> ReportQuestions
+            return await _context.ReportQuestions.AnyAsync(rq => rq.ReportQId == reportQId);
+        }
         // 1. Lấy lộ trình từ DB
         public async Task<List<Personalization>> GetByUserIdAsync(int customerId)
         {
