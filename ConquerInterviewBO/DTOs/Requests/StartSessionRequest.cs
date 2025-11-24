@@ -13,5 +13,7 @@ namespace ConquerInterviewBO.DTOs.Requests
         public string Topic { get; set; } = string.Empty;
         public string Industry { get; set; } = string.Empty;
         public int? DurationMinutes { get; set; } = 30;
+        public int QuestionEasy { get; set; } = 10;
+        public int QuestionDifficult { get; set; } = 5;
     }
 }

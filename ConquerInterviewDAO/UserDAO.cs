@@ -107,5 +107,31 @@ namespace ConquerInterviewDAO
         {
             return await _context.Users.FindAsync(userId);
         }
+
+        // Đặt hàm này bên trong class UserDAO
+        public void UpdateUserStatus(int userId, bool newStatus)
+        {
+            // 1. Tìm kiếm người dùng, sử dụng AsTracking để theo dõi thay đổi
+            var user = _context.Users
+                .AsTracking()
+                .FirstOrDefault(u => u.UserId == userId);
+
+            if (user == null)
+                throw new AppException(AppErrorCode.UserNotFound);
+
+            // 2. Kiểm tra xem trạng thái có cần cập nhật không
+            if (user.Status == newStatus)
+            {
+                // Tùy chọn: Log thông tin và không cần làm gì thêm
+                return;
+            }
+
+            // 3. Cập nhật trạng thái và thời gian cập nhật
+            user.Status = newStatus;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            // 4. Lưu thay đổi vào database
+            _context.SaveChanges();
+        }
     }
 }

@@ -25,5 +25,6 @@ namespace ConquerInterviewRepositories.Implements
         public void SoftDeleteUser(int userId) => UserDAO.Instance.SoftDeleteUser(userId);
         public void UpdateUserRole(int userId, string roleName) => UserDAO.Instance.UpdateUserRole(userId, roleName);
 
+        public void UpdateUserStatus(int userId, bool newStatus) => UserDAO.Instance.UpdateUserStatus(userId, newStatus);
     }
 }

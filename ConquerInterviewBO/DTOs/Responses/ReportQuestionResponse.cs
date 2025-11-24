@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace ConquerInterviewBO.DTOs.Responses
 {
-    public class AnswerReportResponse
+    public class ReportQuestionResponse
     {
-        public int ReportId { get; set; }
-        public int AnswerId { get; set; }
+        public string? QuestionText { get; set; }
         public string? OverallAssessment { get; set; }
         public string? FacialExpression { get; set; }
         public string? SpeakingSpeedClarity { get; set; }

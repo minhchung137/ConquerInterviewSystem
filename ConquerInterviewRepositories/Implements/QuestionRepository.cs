@@ -18,8 +18,8 @@ namespace ConquerInterviewRepositories.Implements
             _context = context;
         }
 
-        public Task<Question> GenerateAIQuestionAsync(string topic, string industry, string jobPosition)
-              => QuestionDAO.Instance.GenerateAIQuestionAsync(topic, industry, jobPosition);
+        public Task<List<Question>> GenerateAIQuestionAsync(string topic, string industry, string jobPosition, int QuestionDifficult)
+              => QuestionDAO.Instance.GenerateAIQuestionsAsync(topic, industry, jobPosition, QuestionDifficult);
 
         public Task<List<Question>> GetRandomQuestionsAsync(int count, int level)
             => QuestionDAO.Instance.GetRandomQuestionsAsync(count, level);

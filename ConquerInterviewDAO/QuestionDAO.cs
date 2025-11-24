@@ -44,10 +44,12 @@ namespace ConquerInterviewDAO
         }
 
 
-        public async Task<Question> GenerateAIQuestionAsync(string topic, string industry, string jobPosition)
+        public async Task<List<Question>> GenerateAIQuestionsAsync(string topic, string industry, string jobPosition, int QuestionDifficult)
         {
             using var client = new HttpClient();
+            var newQuestions = new List<Question>();
 
+            // Payload gửi đi (giữ nguyên logic cũ)
             var payload = new
             {
                 topic = topic ?? "General",
@@ -56,31 +58,50 @@ namespace ConquerInterviewDAO
                 difficultyLevel = 2
             };
 
-            var response = await client.PostAsJsonAsync("http://localhost:5000/api/generate_question", payload);
-
-            if (!response.IsSuccessStatusCode)
+            // Cách 1: Gọi tuần tự (An toàn nhất cho Localhost Python đơn luồng)
+            for (int i = 0; i < QuestionDifficult; i++)
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"AI Service error: {response.StatusCode} - {error}");
+                try
+                {
+                    var response = await client.PostAsJsonAsync("http://localhost:5000/api/generate_question", payload);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var json = await response.Content.ReadAsStringAsync();
+                        var aiQuestionResponse = JsonSerializer.Deserialize<QuestionResponse>(json,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        if (aiQuestionResponse != null && !string.IsNullOrWhiteSpace(aiQuestionResponse.QuestionText))
+                        {
+                            newQuestions.Add(new Question
+                            {
+                                QuestionText = aiQuestionResponse.QuestionText,
+                                DifficultyLevel = aiQuestionResponse.DifficultyLevel ,
+                                // Nếu có cột topic/industry trong DB thì gán luôn tại đây
+                                // Topic = topic, 
+                                // Industry = industry 
+                            });
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log lỗi nhưng không dừng luồng, để cố gắng lấy các câu còn lại
+                    Console.WriteLine($"Lỗi khi lấy câu hỏi thứ {i + 1}: {ex.Message}");
+                }
             }
 
-            var json = await response.Content.ReadAsStringAsync();
-            var aiQuestion = JsonSerializer.Deserialize<QuestionResponse>(json,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-            if (aiQuestion == null || string.IsNullOrWhiteSpace(aiQuestion.QuestionText))
-                throw new Exception("AI question generation failed: invalid response from Flask API.");
-
-            var question = new Question
+            // Kiểm tra nếu không lấy được câu nào
+            if (newQuestions.Count == 0)
             {
-                QuestionText = aiQuestion.QuestionText,
-                DifficultyLevel = aiQuestion.DifficultyLevel
-            };
+                throw new Exception("AI Service failed to generate any questions.");
+            }
 
-            _context.Questions.Add(question);
+            // Lưu tất cả vào DB một lần (Bulk Insert) => Tối ưu hiệu năng
+            await _context.Questions.AddRangeAsync(newQuestions);
             await _context.SaveChangesAsync();
 
-            return question;
+            return newQuestions;
         }
 
     }

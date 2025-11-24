@@ -14,5 +14,6 @@ namespace ConquerInterviewRepositories.Interfaces
         void UpdateUser(User user);
         void SoftDeleteUser(int userId);
         void UpdateUserRole(int userId, string roleName);
+        void UpdateUserStatus(int userId, bool newStatus);
     }
 }

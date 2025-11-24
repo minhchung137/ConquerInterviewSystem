@@ -8,6 +8,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ConquerInterviewDAO
 {
@@ -97,12 +98,20 @@ namespace ConquerInterviewDAO
 
             public async Task<List<ReportQuestion>> GetReportsBySessionAsync(int sessionId)
             {
-                return await _context.ReportQuestions
+                return await _context.ReportQuestions                   
                     .Include(r => r.InterviewA)
+                    .ThenInclude(a => a.Question)
                     .Where(r => r.InterviewA.SessionId == sessionId)
                     .ToListAsync();
             }
+
+        public async Task<InterviewSession> GetSessionByIdAsync(int sessionId)
+        {
+            
+            return await _context.InterviewSessions            
+                .FirstOrDefaultAsync(s => s.SessionId == sessionId);
         }
+    }
 
     public class AIReportResponse
     {

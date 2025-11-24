@@ -11,5 +11,7 @@ namespace ConquerInterviewRepositories.Interfaces
     {
         Task<ReportQuestion> GenerateAIReportAsync(InterviewAnswer answer, string question);
         Task<List<ReportQuestion>> GetReportsBySessionAsync(int sessionId);
+
+        Task<InterviewSession> GetSessionByIdAsync(int sessionId);
     }
 }

@@ -10,6 +10,6 @@ namespace ConquerInterviewBO.DTOs.Responses
     {
         public int SessionId { get; set; }
         public string JobPosition { get; set; } = string.Empty;
-        public List<AnswerReportResponse> Reports { get; set; } = new();
+        public List<ReportQuestionResponse> Reports { get; set; } = new();
     }
 }

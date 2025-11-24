@@ -119,5 +119,33 @@ namespace ConquerInterviewAPI.Controller
                     APIResponse<string>.Fail(AppErrorCode.InternalError, ResponseStatus.InternalServerError));
             }
         }
+
+        [Authorize]
+        [HttpPut("{userId}/status")]
+        public IActionResult UpdateUserStatus(int userId, [FromQuery] bool newStatus)
+        {
+            try
+            {
+                // 1. Kiểm tra quyền sở hữu (Nếu cần, nhưng chức năng này thường là ADMIN)
+                // 2. Gọi Service để cập nhật trạng thái
+                _userService.UpdateUserStatus(userId, newStatus);
+
+                // 3. Trả về thành công
+                return StatusCode((int)ResponseStatus.Success,
+                    APIResponse<string>.Success($"User status updated successfully to {newStatus}"));
+            }
+            catch (AppException ex) when (ex.ErrorCode == AppErrorCode.UserNotFound)
+            {
+                // Xử lý khi User không tìm thấy
+                return StatusCode((int)ResponseStatus.NotFound,
+                    APIResponse<string>.Fail(AppErrorCode.UserNotFound, ResponseStatus.NotFound));
+            }
+            catch (Exception)
+            {
+                // Xử lý lỗi hệ thống chung
+                return StatusCode((int)ResponseStatus.InternalServerError,
+                    APIResponse<string>.Fail(AppErrorCode.InternalError, ResponseStatus.InternalServerError));
+            }
+        }
     }
 }
