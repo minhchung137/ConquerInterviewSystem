@@ -88,5 +88,12 @@ namespace ConquerInterviewDAO
             _context.InterviewSessions.Update(session);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdateStatusAsync(int sessionId, string status)
+        {
+                 await _context.InterviewSessions
+                .Where(s => s.SessionId == sessionId)
+                .ExecuteUpdateAsync(s => s.SetProperty(sess => sess.Status, status));
+        }
     }
 }

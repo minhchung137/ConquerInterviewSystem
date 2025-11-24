@@ -5,7 +5,8 @@ using ConquerInterviewBO.DTOs.Responses;
 using ConquerInterviewServices.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging; // Thêm thư viện logging
+using Microsoft.Extensions.Logging;
+using System.Security.Claims; // Thêm thư viện logging
 
 namespace ConquerInterviewAPI.Controller
 {
@@ -97,10 +98,32 @@ namespace ConquerInterviewAPI.Controller
         public async Task<IActionResult> GetReport(int sessionId)
         {
             _logger.LogInformation("Nhận được request tại endpoint [GET] /api/Session/{SessionId}/report", sessionId);
+
+            // 1. LẤY USER ID TỪ CLAIMS
+            // Giả định: UserId được lưu dưới dạng ClaimTypes.NameIdentifier
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(userIdClaim, out int currentUserId))
+            {
+                // Xử lý nếu UserId không hợp lệ hoặc không có trong token (không được xác thực)
+                _logger.LogWarning("Không thể tìm thấy hoặc parse UserId từ token. Access Denied.");
+                // Giả sử Unauthorized là 401 hoặc Forbidden 403 tùy thuộc vào logic bảo mật của bạn
+                return StatusCode((int)ResponseStatus.Forbidden, APIResponse<string>.Fail(AppErrorCode.UnauthorizedAccess, ResponseStatus.Forbidden));
+            }
+
             try
             {
-                var res = await _sessionService.GetReportBySessionAsync(sessionId);
+                // 2. TRUYỀN CẢ SESSION ID VÀ USER ID VÀO SERVICE
+                // Bạn cần thay đổi chữ ký hàm trong Service để chấp nhận currentUserId
+                var res = await _sessionService.GetReportBySessionAsync(sessionId, currentUserId);
+
                 return StatusCode((int)ResponseStatus.Success, APIResponse<ReportResponse>.Success(res, "Report fetched"));
+            }
+            // 3. Xử lý lỗi riêng tư/quyền sở hữu
+            catch (AppException ex) when (ex.ErrorCode == AppErrorCode.UnauthorizedAccess)
+            {
+                _logger.LogWarning("UserId {CurrentUserId} không có quyền truy cập báo cáo Session {SessionId}.", currentUserId, sessionId);
+                return StatusCode((int)ResponseStatus.Forbidden, APIResponse<string>.Fail(AppErrorCode.UnauthorizedAccess, ResponseStatus.Forbidden));
             }
             catch (AppException ex) when (ex.ErrorCode == AppErrorCode.SessionNotFound)
             {
@@ -109,9 +132,22 @@ namespace ConquerInterviewAPI.Controller
             }
             catch (Exception ex)
             {
-                // Ghi log lỗi 500 chi tiết
                 _logger.LogError(ex, "Lỗi không xác định xảy ra trong [GET] /api/Session/{SessionId}/report", sessionId);
                 return StatusCode((int)ResponseStatus.InternalServerError, APIResponse<string>.Fail(AppErrorCode.InternalError, ResponseStatus.InternalServerError));
+            }
+        }
+
+        [HttpPut("update-status")]
+        public async Task<IActionResult> UpdateStatus(int sessionId, string status)
+        {
+            try
+            {
+                await _sessionService.UpdateStatusAsync(sessionId, status);
+                return Ok(new { message = "Update status thành công" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = "Lỗi khi update status", error = ex.Message });
             }
         }
     }

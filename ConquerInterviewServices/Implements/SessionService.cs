@@ -2,6 +2,8 @@
 using ConquerInterviewBO.Commons;
 using ConquerInterviewBO.DTOs.Requests;
 using ConquerInterviewBO.DTOs.Responses;
+using ConquerInterviewDAO;
+using ConquerInterviewRepositories.Implements;
 using ConquerInterviewRepositories.Interfaces;
 using ConquerInterviewServices.Interfaces;
 using Microsoft.Extensions.Logging; // Thêm thư viện logging
@@ -162,28 +164,64 @@ namespace ConquerInterviewServices.Implements
             };
         }
 
-        public async Task<ReportResponse> GetReportBySessionAsync(int sessionId)
+        public async Task<ReportResponse> GetReportBySessionAsync(int sessionId, int currentUserId)
         {
+
+            var session = await _reportRepo.GetSessionByIdAsync(sessionId);
+
+            if (session == null)
+            {
+                throw new AppException(AppErrorCode.UserNotFound);
+            }
+
+            // 2. KIỂM TRA QUYỀN SỞ HỮU
+            if (session.UserId != currentUserId)
+            {
+                throw new AppException(AppErrorCode.UnauthorizedAccess);
+            }
+
             _logger.LogInformation("Đang lấy báo cáo tổng hợp cho Session ID: {SessionId}", sessionId);
+            // DAO đã được sửa để tải InterviewA và Question
             var reports = await _reportRepo.GetReportsBySessionAsync(sessionId);
+
             _logger.LogInformation("Tìm thấy {ReportCount} báo cáo cho Session ID: {SessionId}", reports.Count(), sessionId);
+
+            // Bỏ dòng 'var question = reports.' không cần thiết
+
             return new ReportResponse
             {
                 SessionId = sessionId,
-                Reports = reports.Select(r => new AnswerReportResponse
+                Reports = reports.Select(r =>
                 {
-                    AnswerId = r.InterviewAId,
-                    OverallAssessment = r.OverallAssessment ?? string.Empty,
-                    ExpertiseExperience = r.ExpertiseExperience ?? string.Empty,
-                    FacialExpression = r.FacialExpression ?? string.Empty,
-                    SpeakingSpeedClarity = r.SpeakingSpeedClarity ?? string.Empty,
-                    ResponseDurationPerQuestion = r.ResponseDurationPerQuestion ?? string.Empty,
-                    AnswerContentAnalysis = r.AnswerContentAnalysis ?? string.Empty,
-                    ComparisonWithOtherCandidates = r.ComparisonWithOtherCandidates ?? string.Empty,
-                    ProblemSolvingSkills = r.ProblemSolvingSkills ?? string.Empty,
-                    Status = r.Status ?? "Pending"
+                    // Kiểm tra an toàn null cho các Entity đã được tải qua Include
+                    var interviewA = r.InterviewA;
+                    var question = interviewA?.Question;
+
+                    return new ReportQuestionResponse
+                    {
+                        // ÁNH XẠ QUESTION TEXT: Dùng Question.QuestionText
+                        QuestionText = question?.QuestionText ?? "Nội dung câu hỏi không tồn tại",
+
+                        // ÁNH XẠ QUESTION ID (Tùy chọn, nên có)
+                        // QuestionId = interviewA?.QuestionId ?? 0, 
+
+                        OverallAssessment = r.OverallAssessment ?? string.Empty,
+                        ExpertiseExperience = r.ExpertiseExperience ?? string.Empty,
+                        FacialExpression = r.FacialExpression ?? string.Empty,
+                        SpeakingSpeedClarity = r.SpeakingSpeedClarity ?? string.Empty,
+                        ResponseDurationPerQuestion = r.ResponseDurationPerQuestion ?? string.Empty,
+                        AnswerContentAnalysis = r.AnswerContentAnalysis ?? string.Empty,
+                        ComparisonWithOtherCandidates = r.ComparisonWithOtherCandidates ?? string.Empty,
+                        ProblemSolvingSkills = r.ProblemSolvingSkills ?? string.Empty,
+                        Status = r.Status ?? "Pending"
+                    };
                 }).ToList()
             };
         }
+
+        public Task UpdateStatusAsync(int sessionId, string status)
+            => _sessionRepo.UpdateStatusAsync(sessionId, status);
+
+
     }
 }

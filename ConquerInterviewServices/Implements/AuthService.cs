@@ -64,7 +64,7 @@ namespace ConquerInterviewServices.Implements
             if (user.PasswordHash != request.Password)
                 throw new AppException(AppErrorCode.InvalidPassword);
 
-            if (user.Status == false)
+            if (user.Status == null)
                 throw new AppException(AppErrorCode.UserDisabled);
 
 

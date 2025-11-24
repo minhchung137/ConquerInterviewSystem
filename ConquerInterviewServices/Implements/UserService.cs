@@ -93,5 +93,10 @@ namespace ConquerInterviewServices.Implements
             var updatedUser = _userRepository.GetUserById(request.UserId);
             return MapToUserResponse(updatedUser);
         }
+
+        public void UpdateUserStatus(int userId, bool newStatus)
+        {
+            _userRepository.UpdateUserStatus(userId, newStatus);
+        }
     }
 }

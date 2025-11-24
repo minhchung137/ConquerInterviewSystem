@@ -14,5 +14,8 @@ namespace ConquerInterviewRepositories.Interfaces
         Task AssignQuestionsToSessionAsync(int sessionId, List<Question> questions); // nếu bạn dùng lưu mapping
         Task<List<Question>> GetQuestionsBySessionAsync(int sessionId);
         Task UpdateSessionAsync(InterviewSession session);
+
+        Task UpdateStatusAsync(int sessionId, string status);
+        
     }
 }
