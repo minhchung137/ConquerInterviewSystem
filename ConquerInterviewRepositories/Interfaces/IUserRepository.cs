@@ -1,4 +1,5 @@
 ﻿using ConquerInterviewBO.Models;
+using ConquerInterviewDAO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,6 @@ namespace ConquerInterviewRepositories.Interfaces
         void SoftDeleteUser(int userId);
         void UpdateUserRole(int userId, string roleName);
         void UpdateUserStatus(int userId, bool newStatus);
+        void UpdateTrialCount(int userId, int newTrialCount);
     }
 }

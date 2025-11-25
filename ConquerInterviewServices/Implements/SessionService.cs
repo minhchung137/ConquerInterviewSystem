@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ConquerInterviewServices.Implements
 {
@@ -219,6 +220,56 @@ namespace ConquerInterviewServices.Implements
             };
         }
 
+        public async Task<List<ReportResponse>> GetReportsByUserIdAsync(int currentUserId)
+        {
+            // ... (logic DAO và kiểm tra lỗi)
+
+            var allReports = await _reportRepo.GetReportsByUserAsync(currentUserId);
+
+            // ...
+
+            var groupedReports = allReports
+                .GroupBy(r => r.InterviewA.SessionId)
+                .Select(group =>
+                {
+                    // Lấy một đối tượng bất kỳ trong nhóm (câu trả lời đầu tiên)
+                    var representativeReport = group.First();
+                    // Truy cập Entity Session đã được tải
+                    var session = representativeReport.InterviewA.Session;
+
+                    return new ReportResponse
+                    {
+                        SessionId = group.Key,
+                        
+                        JobPosition = session?.JobPosition,
+                        
+                        SessionDate = session?.StartTime, 
+
+                        Reports = group.Select(r =>
+                        {
+                            var interviewA = r.InterviewA;
+                            var question = interviewA?.Question;
+
+                            return new ReportQuestionResponse
+                            {                               
+                                QuestionText = question?.QuestionText ?? "Nội dung câu hỏi không tồn tại",                             
+                                OverallAssessment = r.OverallAssessment ?? string.Empty,
+                                ExpertiseExperience = r.ExpertiseExperience ?? string.Empty,
+                                FacialExpression = r.FacialExpression ?? string.Empty,
+                                SpeakingSpeedClarity = r.SpeakingSpeedClarity ?? string.Empty,
+                                ResponseDurationPerQuestion = r.ResponseDurationPerQuestion ?? string.Empty,
+                                AnswerContentAnalysis = r.AnswerContentAnalysis ?? string.Empty,
+                                ComparisonWithOtherCandidates = r.ComparisonWithOtherCandidates ?? string.Empty,
+                                ProblemSolvingSkills = r.ProblemSolvingSkills ?? string.Empty,
+                                Status = r.Status ?? "Pending"
+                            };
+                        }).ToList()
+                    };
+                })
+                .ToList();
+
+            return groupedReports;
+        }
         public Task UpdateStatusAsync(int sessionId, string status)
             => _sessionRepo.UpdateStatusAsync(sessionId, status);
 

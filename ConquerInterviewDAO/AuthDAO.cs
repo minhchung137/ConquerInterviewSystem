@@ -45,6 +45,7 @@ namespace ConquerInterviewDAO
         public User GetUserByUsername(string username)
         {
             return _context.Users
+                .AsNoTracking()
                 .Include(u => u.Roles)
                 .FirstOrDefault(u => u.Username.Equals(username));
         }

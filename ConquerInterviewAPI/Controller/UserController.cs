@@ -147,5 +147,37 @@ namespace ConquerInterviewAPI.Controller
                     APIResponse<string>.Fail(AppErrorCode.InternalError, ResponseStatus.InternalServerError));
             }
         }
+
+        [Authorize] // Chỉ khách hàng Free Trial mới gọi hàm này
+        [HttpPut("decrement-trial")]
+        public IActionResult DecrementTrialCount()
+        {
+            // 1. Lấy User ID từ Claims (người dùng đang đăng nhập)
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(userIdClaim, out int currentUserId))
+            {
+                return Unauthorized(APIResponse<string>.Fail(AppErrorCode.UnauthorizedAccess, ResponseStatus.Unauthorized));
+            }
+
+            try
+            {
+                // 2. Gọi Service để trừ TrialCount đi 1
+                _userService.DecrementTrialCount(currentUserId);
+
+                // 3. Trả về thành công
+                return StatusCode((int)ResponseStatus.Success,
+                    APIResponse<string>.Success($"Trial count for user {currentUserId} decremented by 1."));
+            }
+            catch (AppException ex) when (ex.ErrorCode == AppErrorCode.UserNotFound)
+            {
+                return NotFound(APIResponse<string>.Fail(AppErrorCode.UserNotFound, ResponseStatus.NotFound));
+            }
+            catch (Exception)
+            {
+                return StatusCode((int)ResponseStatus.InternalServerError,
+                    APIResponse<string>.Fail(AppErrorCode.InternalError, ResponseStatus.InternalServerError));
+            }
+        }
     }
 }

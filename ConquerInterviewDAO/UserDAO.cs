@@ -133,5 +133,23 @@ namespace ConquerInterviewDAO
             // 4. Lưu thay đổi vào database
             _context.SaveChanges();
         }
+
+        public void UpdateTrialCount(int userId, int newTrialCount)
+        {
+            // 1. Tìm kiếm người dùng, sử dụng AsTracking để theo dõi thay đổi
+            var user = _context.Users
+                .AsTracking()
+                .FirstOrDefault(u => u.UserId == userId);
+
+            if (user == null)
+                throw new AppException(AppErrorCode.UserNotFound); // Giả định AppException/AppErrorCode tồn tại
+
+            // 2. Cập nhật TrialCount và thời gian cập nhật
+            user.TrialCount = newTrialCount;
+            user.UpdatedAt = DateTime.UtcNow; // Cập nhật thời gian thay đổi
+
+            // 3. Lưu thay đổi vào database
+            _context.SaveChanges();
+        }
     }
 }

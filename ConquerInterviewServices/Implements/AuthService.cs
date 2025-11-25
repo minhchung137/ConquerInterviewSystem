@@ -40,7 +40,7 @@ namespace ConquerInterviewServices.Implements
                 Email = request.Email,
                 FullName = request.FullName,
                 PhoneNumber = request.PhoneNumber,
-                Status = true,
+                Status = false,
                 DateOfBirth = request.DateOfBirth.HasValue ? DateOnly.FromDateTime(request.DateOfBirth.Value) : null,
                 Gender = request.Gender,
                 AvatarUrl = request.AvatarUrl,
