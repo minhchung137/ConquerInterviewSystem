@@ -150,5 +150,40 @@ namespace ConquerInterviewAPI.Controller
                 return BadRequest(new { message = "Lỗi khi update status", error = ex.Message });
             }
         }
+
+        [Authorize]
+        [HttpGet("report")]
+        public async Task<IActionResult> GetUserReportsHistory()
+        {
+            // 1. Lấy User ID từ Claims (người dùng hiện tại)
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(userIdClaim, out int currentUserId))
+            {
+                return Unauthorized(APIResponse<string>.Fail(AppErrorCode.UnauthorizedAccess, ResponseStatus.Unauthorized));
+            }
+
+            _logger.LogInformation("Nhận request lấy lịch sử báo cáo cho User ID: {UserId}", currentUserId);
+
+            try
+            {
+                // 2. Gọi Service để lấy tất cả báo cáo theo User ID
+                var reportsHistory = await _sessionService.GetReportsByUserIdAsync(currentUserId);
+
+                if (reportsHistory == null || reportsHistory.Count == 0)
+                {
+                    return StatusCode((int)ResponseStatus.NotFound, APIResponse<string>.Fail(AppErrorCode.SessionNotFound, ResponseStatus.NotFound));
+                }
+
+                return StatusCode((int)ResponseStatus.Success,
+                    APIResponse<List<ReportResponse>>.Success(reportsHistory, "Fetched user reports history successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi không xác định khi lấy lịch sử báo cáo.");
+                return StatusCode((int)ResponseStatus.InternalServerError,
+                    APIResponse<string>.Fail(AppErrorCode.InternalError, ResponseStatus.InternalServerError));
+            }
+        }
     }
 }

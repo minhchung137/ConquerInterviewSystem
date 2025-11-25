@@ -105,6 +105,17 @@ namespace ConquerInterviewDAO
                     .ToListAsync();
             }
 
+            public async Task<List<ReportQuestion>> GetReportsByUserAsync(int userId)
+            {
+                return await _context.ReportQuestions
+                    .Include(r => r.InterviewA)
+                    .ThenInclude(a => a.Question)
+                    .Include(r => r.InterviewA) 
+                    .ThenInclude(a => a.Session)
+                    .Where(r => r.CustomerId == userId)
+                    .ToListAsync();
+            }
+
         public async Task<InterviewSession> GetSessionByIdAsync(int sessionId)
         {
             

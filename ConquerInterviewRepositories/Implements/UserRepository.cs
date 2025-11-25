@@ -26,5 +26,7 @@ namespace ConquerInterviewRepositories.Implements
         public void UpdateUserRole(int userId, string roleName) => UserDAO.Instance.UpdateUserRole(userId, roleName);
 
         public void UpdateUserStatus(int userId, bool newStatus) => UserDAO.Instance.UpdateUserStatus(userId, newStatus);
+
+        public void UpdateTrialCount(int userId, int newTrialCount) => UserDAO.Instance.UpdateTrialCount(userId, newTrialCount);
     }
 }

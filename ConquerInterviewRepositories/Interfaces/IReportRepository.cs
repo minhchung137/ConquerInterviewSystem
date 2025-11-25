@@ -13,5 +13,6 @@ namespace ConquerInterviewRepositories.Interfaces
         Task<List<ReportQuestion>> GetReportsBySessionAsync(int sessionId);
 
         Task<InterviewSession> GetSessionByIdAsync(int sessionId);
+        Task<List<ReportQuestion>> GetReportsByUserAsync(int userId);
     }
 }

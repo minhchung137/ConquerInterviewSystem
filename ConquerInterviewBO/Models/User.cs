@@ -29,6 +29,8 @@ public partial class User
 
     public DateTime? UpdatedAt { get; set; }
 
+    public int TrialCount { get; set; }
+
     public string? Token { get; set; }
 
     public string? ResetToken { get; set; }

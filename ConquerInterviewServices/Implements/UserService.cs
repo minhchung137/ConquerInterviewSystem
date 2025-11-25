@@ -98,5 +98,29 @@ namespace ConquerInterviewServices.Implements
         {
             _userRepository.UpdateUserStatus(userId, newStatus);
         }
+
+        public void UpdateTrialCount(int userId, int newTrialCount)
+        {
+            _userRepository.UpdateTrialCount(userId, newTrialCount);
+        }
+
+        public void DecrementTrialCount(int userId)
+        {
+            
+            var user = _userRepository.GetUserById(userId);
+
+            if (user == null)
+                throw new AppException(AppErrorCode.UserNotFound);
+
+           
+            if (user.TrialCount > 0)
+            {
+                int newTrialCount = user.TrialCount - 1;
+
+                
+                _userRepository.UpdateTrialCount(userId, newTrialCount);
+            }
+            
+        }
     }
 }

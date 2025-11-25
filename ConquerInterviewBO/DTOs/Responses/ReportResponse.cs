@@ -10,6 +10,7 @@ namespace ConquerInterviewBO.DTOs.Responses
     {
         public int SessionId { get; set; }
         public string JobPosition { get; set; } = string.Empty;
+        public DateTime? SessionDate {  get; set; } 
         public List<ReportQuestionResponse> Reports { get; set; } = new();
     }
 }

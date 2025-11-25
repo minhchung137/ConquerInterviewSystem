@@ -364,6 +364,9 @@ public partial class ConquerInterviewDbContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
+            entity.Property(e => e.TrialCount)
+                .HasDefaultValueSql("3") // Giá trị mặc định trong DB
+                .HasColumnName("TrialCount");
             entity.Property(e => e.Username)
                 .HasMaxLength(100)
                 .HasColumnName("username");

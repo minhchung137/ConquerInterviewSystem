@@ -39,7 +39,7 @@ namespace ConquerInterviewDAO
         // Read (All)
         public async Task<List<SubscriptionPlan>> GetAllAsync()
         {
-            return await _context.SubscriptionPlans.ToListAsync();
+            return await _context.SubscriptionPlans.AsNoTracking().ToListAsync();
         }
 
         // Read (By ID)

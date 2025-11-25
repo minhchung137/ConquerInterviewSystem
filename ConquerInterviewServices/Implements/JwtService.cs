@@ -22,13 +22,14 @@ namespace ConquerInterviewServices.Implements
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
+            var userStatusValue = user.Status.HasValue ? (user.Status.Value ? "1" : "0") : "0";
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("userStatus", user.Status.ToString())
+                new Claim("userStatus", userStatusValue),
+                new Claim("trialCount", user.TrialCount.ToString())
             };
 
             if (user.Roles != null)

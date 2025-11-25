@@ -16,5 +16,9 @@ namespace ConquerInterviewServices.Interfaces
         void SoftDeleteUser(int userId);
         UserResponse UpdateUserRole(UpdateUserRoleRequest request);
         void UpdateUserStatus(int userId, bool newStatus);
+
+        void UpdateTrialCount(int userId, int newTrialCount);
+        void DecrementTrialCount(int userId);
     }
+
 }
