@@ -52,5 +52,15 @@ namespace ConquerInterviewRepositories.Implements
         {
             return await PersonalizationDAO.Instance.GetByUserIdAsync(customerId);
         }
+
+        public async Task<List<Personalization>> GetPersonalizationsByCustomerIdAsync(int customerId)
+        {
+            return await PersonalizationDAO.Instance.GetByCustomerIdAsync(customerId);
+        }
+
+        public async Task<List<Personalization>> CallAIPersonalizationAndSaveAsync(int customerId, List<ReportDTO> reports, int representativeReportQId)
+        {
+            return await PersonalizationDAO.Instance.CallAIPersonalizationAndSaveAsync(customerId, reports, representativeReportQId);
+        }
     }
 }

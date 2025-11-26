@@ -12,5 +12,8 @@ namespace ConquerInterviewRepositories.Interfaces
 
         // Tạo lộ trình
         Task<List<Personalization>> CreatePersonalizationAsync(int customerId, int reportQId, List<ReportDTO> reports);
+
+        Task<List<Personalization>> GetPersonalizationsByCustomerIdAsync(int customerId);
+        Task<List<Personalization>> CallAIPersonalizationAndSaveAsync(int customerId, List<ReportDTO> reports, int representativeReportQId);
     }
 }

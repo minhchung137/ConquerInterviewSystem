@@ -41,7 +41,7 @@ namespace ConquerInterviewDAO
         {
             return _context.Users
                 .Include(u => u.Roles)
-                .FirstOrDefault(u => u.UserId == id && u.Status == true);
+                .FirstOrDefault(u => u.UserId == id );
         }
         
         public void UpdateUser(User updatedUser)
@@ -87,7 +87,7 @@ namespace ConquerInterviewDAO
         {
             var user = _context.Users
                 .Include(u => u.Roles)
-                .FirstOrDefault(u => u.UserId == userId && u.Status == true);
+                .FirstOrDefault(u => u.UserId == userId);
 
             if (user == null)
                 throw new AppException(AppErrorCode.UserNotFound);

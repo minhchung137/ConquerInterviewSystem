@@ -47,6 +47,30 @@ namespace ConquerInterviewDAO
                 .ToListAsync();
         }
 
+        public async Task<List<Personalization>> GetByCustomerIdAsync(int customerId)
+        {
+            // Giả định tên DbSet là Personalizations
+            return await _context.Personalizations
+
+                // 1. Tải ReportQuestion Entity (Liên kết trực tiếp)
+                .Include(p => p.ReportQ)
+                    // 2. Tải InterviewAnswer (Answer) từ ReportQuestion
+                    // GIẢ ĐỊNH: ReportQuestion có Navigation Property 'InterviewA'
+                    .ThenInclude(r => r.InterviewA)
+                        // 3. Tải Question từ InterviewAnswer
+                        .ThenInclude(a => a.Question) // <-- Cần cho QuestionText
+
+                // 4. Tải InterviewSession (Session) từ InterviewAnswer
+                .Include(p => p.ReportQ) // Bắt đầu Include lại từ ReportQ
+                    .ThenInclude(r => r.InterviewA)
+                        .ThenInclude(a => a.Session) // <-- Cần cho JobPosition/StartTime
+
+                // Lọc theo CustomerId (Đã sửa từ userId sang customerId để khớp với hàm)
+                .Where(p => p.CustomerId == customerId)
+
+                .ToListAsync();
+        }
+
         // 2. Lưu các bước lộ trình mới vào DB
         public async Task<List<Personalization>> SavePersonalizationStepsAsync(List<Personalization> steps)
         {
@@ -77,6 +101,33 @@ namespace ConquerInterviewDAO
             // Deserialize kết quả từ Python
             return JsonSerializer.Deserialize<PythonPersonalizationResponse>(json,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+
+        public async Task<List<Personalization>> CallAIPersonalizationAndSaveAsync(int customerId, List<ReportDTO> reports, int representativeReportQId)
+        {
+            // 1. Gọi Python AI
+            var aiResponse = await CallAIPersonalizationAsync(reports);
+
+            if (aiResponse?.PersonalizedPath == null || !aiResponse.PersonalizedPath.Any())
+            {
+                throw new Exception("AI did not return a valid personalization path.");
+            }
+
+            // 2. Chuyển đổi DTO từ AI sang Model của DB (Lưu tất cả bước)
+            var dbStepsList = aiResponse.PersonalizedPath.Select(step => new Personalization
+            {
+                NamePractice = step.NamePractice,
+                Practice = step.Practice,
+                Exercise = step.Exercise,
+                Objective = step.Objective,
+                CustomerId = customerId,
+                // Gán ReportQId của câu hỏi đại diện (câu đầu tiên)
+                // Lưu ý: Nếu bạn muốn lưu nhiều ReportQId, cấu trúc DB cần thay đổi
+                ReportQId = representativeReportQId
+            }).ToList();
+
+            // 3. Lưu danh sách các bước này vào DB
+            return await PersonalizationDAO.Instance.SavePersonalizationStepsAsync(dbStepsList);
         }
     }
 
