@@ -2,6 +2,7 @@
 using ConquerInterviewBO.Common;
 using ConquerInterviewBO.Commons;
 using ConquerInterviewBO.Models;
+using ConquerInterviewDAO;
 using ConquerInterviewRepositories.Implements;
 using ConquerInterviewRepositories.Interfaces;
 using ConquerInterviewServices.Implements;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Net.payOS;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -76,6 +78,19 @@ builder.Services.AddScoped<ISubscriptionPlanService, SubscriptionPlanService>();
 builder.Services.AddScoped<ISubscriptionPlanRepository, SubscriptionPlanRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<PaymentDAO>();
+builder.Services.AddScoped<UserSubscriptionDAO>();
+builder.Services.AddScoped<OrderDAO>();
+builder.Services.AddScoped<ConquerInterviewDbContext>();
+builder.Services.AddScoped<QuestionDAO>();
+builder.Services.AddScoped<AnswerDAO>();
+builder.Services.AddScoped<ReportDAO>();
+builder.Services.AddScoped<SubscriptionPlanDAO>();
+builder.Services.AddScoped<SessionDAO>();
+builder.Services.AddScoped<UserDAO>();
+builder.Services.AddScoped<AuthDAO>();
 
 
 //Setup JWT
@@ -117,6 +132,17 @@ builder.Services.AddCors(options =>
                    .AllowAnyMethod();
         });
 });
+
+IConfiguration configuration = builder.Configuration;
+Net.payOS.PayOS payOS = new Net.payOS.PayOS(
+    builder.Configuration["PayOS:ClientId"] ?? throw new Exception("Missing ClientId"),
+    builder.Configuration["PayOS:ApiKey"] ?? throw new Exception("Missing ApiKey"),
+    builder.Configuration["PayOS:ChecksumKey"] ?? throw new Exception("Missing ChecksumKey")
+);
+
+// 2. Đăng ký Singleton
+builder.Services.AddSingleton(payOS);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
