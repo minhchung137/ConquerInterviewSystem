@@ -185,5 +185,21 @@ namespace ConquerInterviewAPI.Controller
                     APIResponse<string>.Fail(AppErrorCode.InternalError, ResponseStatus.InternalServerError));
             }
         }
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllSessions()
+        {
+            try
+            {
+                var result = await _sessionService.GetAllSessionsAsync();
+                return StatusCode((int)ResponseStatus.Success,
+                    APIResponse<List<SessionResponse>>.Success(result, "Get all sessions success"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all sessions");
+                return StatusCode((int)ResponseStatus.InternalServerError,
+                    APIResponse<string>.Fail(AppErrorCode.InternalError));
+            }
+        }
     }
 }

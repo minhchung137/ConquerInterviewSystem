@@ -16,6 +16,7 @@ namespace ConquerInterviewBO.DTOs.Responses
         public DateTime? DateOfBirth { get; set; }
         public string Gender { get; set; } = string.Empty;
         public string AvatarUrl { get; set; } = string.Empty;
+        public bool? Status { get; set; }
         public DateTime? Created_at { get; set; }
 
         public DateTime? Updated_at { get; set; }

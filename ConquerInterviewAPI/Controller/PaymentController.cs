@@ -53,5 +53,50 @@ namespace ConquerInterviewAPI.Controller
                 return Ok(new { message = "Received with error" });
             }
         }
+
+        [HttpPut("{orderId}/cancel")]
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            _logger.LogInformation($"Cancelling order {orderId}");
+            try
+            {
+                var result = await _service.CancelOrderAsync(orderId);
+                return StatusCode((int)ResponseStatus.Success, APIResponse<bool>.Success(result, "Order cancelled successfully"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error cancelling order");
+                return StatusCode((int)ResponseStatus.BadRequest, APIResponse<string>.Fail(AppErrorCode.InternalError));
+            }
+        }
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllPayments()
+        {
+            try
+            {
+                var result = await _service.GetAllPaymentsAsync();
+                return StatusCode((int)ResponseStatus.Success, APIResponse<List<PaymentResponse>>.Success(result, "Get all payments success"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)ResponseStatus.InternalServerError, APIResponse<string>.Fail(AppErrorCode.InternalError));
+            }
+        }
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetPaymentsByUser(int userId)
+        {
+            try
+            {
+                var result = await _service.GetPaymentsByUserIdAsync(userId);
+                return StatusCode((int)ResponseStatus.Success, APIResponse<List<PaymentResponse>>.Success(result, "Get user payments success"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)ResponseStatus.InternalServerError, APIResponse<string>.Fail(AppErrorCode.InternalError));
+            }
+        }
+
+
     }
 }

@@ -9,5 +9,8 @@ namespace ConquerInterviewRepositories.Interfaces
     {
         Task<PaymentLinkResponse> CreatePaymentLinkAsync(CreatePaymentLinkRequest request);
         Task ProcessWebhookAsync(WebhookType webhookBody);
+        Task<bool> CancelOrderAsync(int orderId);
+        Task<List<PaymentResponse>> GetAllPaymentsAsync();
+        Task<List<PaymentResponse>> GetPaymentsByUserIdAsync(int userId);
     }
 }

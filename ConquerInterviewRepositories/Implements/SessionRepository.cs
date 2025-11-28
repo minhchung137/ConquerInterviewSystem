@@ -33,5 +33,7 @@ namespace ConquerInterviewRepositories.Implements
             => SessionDAO.Instance.UpdateSessionAsync(session);
         public Task UpdateStatusAsync(int sessionId, string status)
             => SessionDAO.Instance.UpdateStatusAsync(sessionId, status);
+        public Task<List<InterviewSession>> GetAllSessionsAsync()
+        => SessionDAO.Instance.GetAllAsync();
     }
 }

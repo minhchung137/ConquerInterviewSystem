@@ -36,7 +36,6 @@ namespace ConquerInterviewDAO
                 .Include(u => u.Roles)
                 .ToList();
         }
-        // --- Get user by id ---
         public User GetUserById(int id)
         {
             return _context.Users
@@ -82,7 +81,6 @@ namespace ConquerInterviewDAO
             _context.Users.Update(user);
             _context.SaveChanges();
         }
-        // --- Update user role ---
         public void UpdateUserRole(int userId, string roleName)
         {
             var user = _context.Users
@@ -96,7 +94,6 @@ namespace ConquerInterviewDAO
             if (role == null)
                 throw new AppException(AppErrorCode.RoleNotFound);
 
-            // Xóa role cũ và gán role mới (tuỳ quan hệ n-n hoặc 1-n)
             user.Roles.Clear();
             user.Roles.Add(role);
             user.UpdatedAt = DateTime.UtcNow;
@@ -108,10 +105,8 @@ namespace ConquerInterviewDAO
             return await _context.Users.FindAsync(userId);
         }
 
-        // Đặt hàm này bên trong class UserDAO
         public void UpdateUserStatus(int userId, bool newStatus)
         {
-            // 1. Tìm kiếm người dùng, sử dụng AsTracking để theo dõi thay đổi
             var user = _context.Users
                 .AsTracking()
                 .FirstOrDefault(u => u.UserId == userId);
@@ -119,36 +114,29 @@ namespace ConquerInterviewDAO
             if (user == null)
                 throw new AppException(AppErrorCode.UserNotFound);
 
-            // 2. Kiểm tra xem trạng thái có cần cập nhật không
             if (user.Status == newStatus)
             {
-                // Tùy chọn: Log thông tin và không cần làm gì thêm
                 return;
             }
 
-            // 3. Cập nhật trạng thái và thời gian cập nhật
             user.Status = newStatus;
             user.UpdatedAt = DateTime.UtcNow;
 
-            // 4. Lưu thay đổi vào database
             _context.SaveChanges();
         }
 
         public void UpdateTrialCount(int userId, int newTrialCount)
         {
-            // 1. Tìm kiếm người dùng, sử dụng AsTracking để theo dõi thay đổi
             var user = _context.Users
                 .AsTracking()
                 .FirstOrDefault(u => u.UserId == userId);
 
             if (user == null)
-                throw new AppException(AppErrorCode.UserNotFound); // Giả định AppException/AppErrorCode tồn tại
+                throw new AppException(AppErrorCode.UserNotFound); 
 
-            // 2. Cập nhật TrialCount và thời gian cập nhật
             user.TrialCount = newTrialCount;
-            user.UpdatedAt = DateTime.UtcNow; // Cập nhật thời gian thay đổi
+            user.UpdatedAt = DateTime.UtcNow; 
 
-            // 3. Lưu thay đổi vào database
             _context.SaveChanges();
         }
     }

@@ -50,7 +50,6 @@ namespace ConquerInterviewDAO
                 .FirstOrDefault(u => u.Username.Equals(username));
         }
 
-        // --- Add new user ---
         public void AddUser(User user)
         {
             try
@@ -69,7 +68,6 @@ namespace ConquerInterviewDAO
             }
             catch (DbUpdateException ex)
             {
-                // Kiểm tra lỗi duplicate entry
                 if (ex.InnerException?.Message.Contains("Duplicate entry") == true
                     || ex.InnerException?.Message.Contains("UNIQUE constraint failed") == true)
                 {
@@ -80,7 +78,6 @@ namespace ConquerInterviewDAO
         }
 
 
-        // --- Auth with JWT---
         public void UpdateUserToken(int userId, string refreshToken)
         {
             var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
@@ -93,7 +90,6 @@ namespace ConquerInterviewDAO
         }
 
 
-        // --- Get user by reset token ---
         public User GetUserByResetToken(string token)
         {
             var user = _context.Users.FirstOrDefault(u => u.ResetToken == token);
@@ -107,7 +103,6 @@ namespace ConquerInterviewDAO
             return user;
         }
 
-        // --- Update user ---
         public void UpdateUser(User updatedUser)
         {
             var existing = _context.Users.FirstOrDefault(u => u.UserId == updatedUser.UserId);
