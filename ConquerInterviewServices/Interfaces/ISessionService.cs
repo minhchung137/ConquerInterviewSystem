@@ -14,5 +14,6 @@ namespace ConquerInterviewServices.Interfaces
         Task UpdateStatusAsync(int sessionId, string status);
         
         Task<List<ReportResponse>> GetReportsByUserIdAsync(int currentUserId);
+        Task<List<SessionResponse>> GetAllSessionsAsync();
     }
 }

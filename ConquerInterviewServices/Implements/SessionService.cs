@@ -273,6 +273,30 @@ namespace ConquerInterviewServices.Implements
         public Task UpdateStatusAsync(int sessionId, string status)
             => _sessionRepo.UpdateStatusAsync(sessionId, status);
 
+        public async Task<List<SessionResponse>> GetAllSessionsAsync()
+        {
+            var sessions = await _sessionRepo.GetAllSessionsAsync();
+
+            return sessions.Select(s =>
+            {
+                double duration = 0;
+                if (s.StartTime.HasValue && s.EndTime.HasValue)
+                {
+                    duration = (s.EndTime.Value - s.StartTime.Value).TotalMinutes;
+                }
+
+                return new SessionResponse
+                {
+                    SessionId = s.SessionId,
+                    UserId = s.UserId,
+                    JobPosition = s.JobPosition,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    Status = s.Status,
+                    DurationMinutes = Math.Round(duration, 1) 
+                };
+            }).ToList();
+        }
 
     }
 }

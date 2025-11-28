@@ -95,5 +95,11 @@ namespace ConquerInterviewDAO
                 .Where(s => s.SessionId == sessionId)
                 .ExecuteUpdateAsync(s => s.SetProperty(sess => sess.Status, status));
         }
+        public async Task<List<InterviewSession>> GetAllAsync()
+        {
+            return await _context.InterviewSessions
+                .OrderByDescending(s => s.StartTime)
+                .ToListAsync();
+        }
     }
 }

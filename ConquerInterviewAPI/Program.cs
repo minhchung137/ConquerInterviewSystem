@@ -80,18 +80,14 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddHostedService<ConquerInterviewAPI.Workers.SubscriptionExpirationService>();
+builder.Services.AddScoped<IUserSubscriptionRepository, UserSubscriptionRepository>();
+builder.Services.AddScoped<IUserSubscriptionService, UserSubscriptionService>();
+
 builder.Services.AddScoped<PaymentDAO>();
 builder.Services.AddScoped<UserSubscriptionDAO>();
 builder.Services.AddScoped<OrderDAO>();
-builder.Services.AddScoped<ConquerInterviewDbContext>();
-builder.Services.AddScoped<QuestionDAO>();
-builder.Services.AddScoped<AnswerDAO>();
-builder.Services.AddScoped<ReportDAO>();
-builder.Services.AddScoped<SubscriptionPlanDAO>();
-builder.Services.AddScoped<SessionDAO>();
 builder.Services.AddScoped<UserDAO>();
-builder.Services.AddScoped<AuthDAO>();
-
 
 //Setup JWT
 var jwtConfig = builder.Configuration.GetSection("Jwt");
@@ -154,7 +150,11 @@ if (app.Environment.IsDevelopment())
 app.UseDeveloperExceptionPage();
 
 app.UseMiddleware<ExceptionMiddleware>();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseCors();
 app.UseAuthentication();
 

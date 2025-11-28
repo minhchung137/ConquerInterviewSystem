@@ -25,5 +25,20 @@ namespace ConquerInterviewServices.Implements
         {
             await _repo.ProcessWebhookAsync(webhookBody);
         }
+        public async Task<bool> CancelOrderAsync(int orderId)
+        {
+            return await _repo.CancelOrderAsync(orderId);
+        }
+        public async Task<List<PaymentResponse>> GetAllPaymentsAsync()
+    {
+        return await _repo.GetAllPaymentsAsync();
+    }
+
+    public async Task<List<PaymentResponse>> GetPaymentsByUserIdAsync(int userId)
+    {
+        return await _repo.GetPaymentsByUserIdAsync(userId);
+    }
+
+   
     }
 }

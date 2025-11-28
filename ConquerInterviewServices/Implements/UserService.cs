@@ -77,6 +77,7 @@ namespace ConquerInterviewServices.Implements
                 DateOfBirth = user.DateOfBirth?.ToDateTime(TimeOnly.MinValue),
                 Gender = user.Gender,
                 AvatarUrl = user.AvatarUrl,
+                Status = user.Status ?? false,
                 Created_at = user.CreatedAt,
                 Updated_at = user.UpdatedAt,
                 Roles = user.Roles?.Select(r => r.RoleName).ToList() ?? new List<string>()

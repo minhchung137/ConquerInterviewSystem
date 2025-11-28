@@ -11,11 +11,12 @@ namespace ConquerInterviewRepositories.Interfaces
     {
         Task<InterviewSession> CreateSessionAsync(int userId, string jobPosition, int durationMinutes);
         Task<InterviewSession?> GetByIdAsync(int sessionId);
-        Task AssignQuestionsToSessionAsync(int sessionId, List<Question> questions); // nếu bạn dùng lưu mapping
+        Task AssignQuestionsToSessionAsync(int sessionId, List<Question> questions);
         Task<List<Question>> GetQuestionsBySessionAsync(int sessionId);
         Task UpdateSessionAsync(InterviewSession session);
 
         Task UpdateStatusAsync(int sessionId, string status);
-        
+        Task<List<InterviewSession>> GetAllSessionsAsync();
+
     }
 }

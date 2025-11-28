@@ -11,7 +11,6 @@ namespace ConquerInterviewServices.Implements
     {
         private readonly IOrderRepository _orderRepo;
 
-        // Giả sử bạn đã tiêm (Inject) Repository
         public OrderService(IOrderRepository orderRepo)
         {
             _orderRepo = orderRepo;
@@ -19,11 +18,8 @@ namespace ConquerInterviewServices.Implements
 
         public async Task<OrderResponse> CreateOrderAsync(CreateOrderRequest request)
         {
-            // 1. Gọi Repo để tạo Order
-            // Repo sẽ lo việc validate UserId và PlanId
             var order = await _orderRepo.CreateOrderAsync(request.UserId, request.PlanId);
 
-            // 2. Map sang Response DTO
             return MapToResponse(order);
         }
 
@@ -37,7 +33,6 @@ namespace ConquerInterviewServices.Implements
             return MapToResponse(order);
         }
 
-        // Hàm helper để map Model sang Response DTO
         private OrderResponse MapToResponse(Order order)
         {
             return new OrderResponse
