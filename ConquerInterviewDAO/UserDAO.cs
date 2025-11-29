@@ -33,6 +33,7 @@ namespace ConquerInterviewDAO
         public List<User> GetAllUsers()
         {
             return _context.Users
+                .AsNoTracking()
                 .Include(u => u.Roles)
                 .ToList();
         }

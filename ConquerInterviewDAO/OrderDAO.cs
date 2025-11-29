@@ -38,6 +38,7 @@ namespace ConquerInterviewDAO
         public async Task<Order?> GetByIdAsync(int orderId)
         {
             return await _context.Orders
+                .AsNoTracking()
                 .Include(o => o.Plan) // Tải thông tin Plan
                 .Include(o => o.User) // Tải thông tin User
                 .FirstOrDefaultAsync(o => o.OrderId == orderId);
