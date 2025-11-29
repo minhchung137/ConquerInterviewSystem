@@ -30,7 +30,8 @@ namespace ConquerInterviewServices.Implements
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim("userStatus", userStatusValue),
                 new Claim("trialCount", user.TrialCount.ToString()),
-                new Claim("userId", user.UserId.ToString())
+                new Claim("userId", user.UserId.ToString()),
+                new Claim("role", user.Roles.ToString())
             };
 
             if (user.Roles != null)

@@ -1,24 +1,105 @@
 topic,industry,question
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích về Idempotency và vai trò trong giao dịch tiền tệ.
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Mô tả cách bạn thiết kế hệ thống sổ cái (ledger system) bất biến.
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để xử lý sự cố mạng khi gửi lệnh rút tiền cho ngân hàng bên thứ ba?
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Sự khác biệt giữa 2PC và TCC trong ngữ cảnh giao dịch tài chính.
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Khi nào bạn nên dùng Message Queue so với gRPC trong Microservices tài chính?
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Ưu điểm và nhược điểm của việc lưu trữ giá tiền dưới dạng số nguyên (integer) so với thập phân (decimal).
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách bạn triển khai Rate Limiting để bảo vệ các API giao dịch.
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Nêu các rủi ro bảo mật chính trong hệ thống thanh toán và cách giảm thiểu.
-Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Mô tả một lần bạn xử lý một lỗi nghiêm trọng liên quan đến tính nhất quán dữ liệu.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích Idempotency và vai trò của nó trong các giao dịch thanh toán.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để thiết kế một ledger system bất biến đảm bảo audit trail đầy đủ.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Xử lý các sự cố mạng khi gửi lệnh rút tiền cho ngân hàng bên thứ ba như thế nào.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phân biệt giữa 2PC và TCC trong ngữ cảnh giao dịch tài chính phân tán.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Khi nào nên sử dụng Message Queue thay vì gRPC trong microservices tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Lưu trữ giá tiền bằng integer so với decimal: ưu nhược điểm.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách triển khai Rate Limiting để bảo vệ API giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Các rủi ro bảo mật chính trong hệ thống thanh toán và cách giảm thiểu.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Mô tả một lần bạn xử lý lỗi nghiêm trọng liên quan đến tính nhất quán dữ liệu.
 Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế cơ sở dữ liệu cho hệ thống ví điện tử đơn giản.
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Thiết kế hệ thống giỏ hàng và làm thế nào để xử lý session/tài khoản.
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Làm thế nào để xử lý việc đặt hàng quá tải (overselling) khi flash sale?
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Sự khác biệt giữa Monolith và Microservices trong một sàn thương mại điện tử.
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Xử lý việc phân loại và tìm kiếm sản phẩm trên hàng triệu SKU.
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Giải thích về Eventual Consistency và nó áp dụng cho những phần nào trong E-commerce.
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Cách bạn thiết kế hệ thống gợi ý sản phẩm đơn giản (recommendation engine).
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Tại sao cần dùng caching và bạn cache những gì trong backend E-commerce?
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Mô tả luồng xử lý đơn hàng từ khi click 'Thanh toán' đến khi hoàn tất.
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Lợi ích của việc sử dụng các ngôn ngữ lập trình tĩnh (statically-typed) cho backend E-commerce.
-Kỹ sư Phần mềm (Backend),Thương mại điện tử,Giải thích về kỹ thuật Sharding và khi nào áp dụng cho CSDL sản phẩm.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để đảm bảo tính ACID khi xử lý hàng nghìn giao dịch đồng thời.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích cách hoạt động của Payment Gateway và các bước xác thực thanh toán.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách bạn thiết kế hệ thống webhook để nhận thông báo từ ngân hàng.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để chống double spending trong ví điện tử hoặc sổ cái.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phương pháp tối ưu hóa query trong cơ sở dữ liệu giao dịch lớn.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Sử dụng Event Sourcing để quản lý giao dịch: ưu và nhược điểm.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích cách hoạt động của hệ thống reconciliation giữa ngân hàng và ví điện tử.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế API thanh toán RESTful đảm bảo bảo mật và idempotency.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách bạn xử lý rollback khi một giao dịch multi-step thất bại.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Ưu điểm và nhược điểm của việc dùng NoSQL cho lưu trữ giao dịch tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để audit log đảm bảo an toàn và không thể sửa đổi.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phân biệt giữa soft delete và hard delete trong hệ thống tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách bảo vệ API chống replay attack.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Sử dụng Distributed Lock để tránh race condition trong ghi sổ cái.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế hệ thống thanh toán P2P: các lưu ý về concurrency.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phương pháp phân mảnh dữ liệu (sharding) trong database giao dịch lớn.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để implement Two-Factor Authentication (2FA) trong API thanh toán.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách quản lý secret keys và token khi gọi API ngân hàng bên ngoài.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Xây dựng hệ thống notifications cho giao dịch: push, email, webhook.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Sử dụng circuit breaker pattern để chống lỗi cascading trong microservices.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để đảm bảo tính idempotent khi retry giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách kiểm tra tính nhất quán giữa ledger và cơ sở dữ liệu người dùng.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phương pháp mã hóa dữ liệu nhạy cảm trong cơ sở dữ liệu tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Sử dụng JWT vs OAuth2 cho API tài chính: ưu nhược điểm.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế hệ thống thanh toán đa tiền tệ.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách handle race condition khi trừ tiền ví người dùng trong nhiều request đồng thời.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Triển khai batch job để tính hoa hồng và phí giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để monitor latency và throughput của API thanh toán.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích CQRS pattern trong hệ thống tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,So sánh transaction log và event log trong ledger system.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích cách hoạt động của escrow trong giao dịch online.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế retry mechanism an toàn cho payment API.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phân tích bottleneck thường gặp trong hệ thống ví điện tử.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách tối ưu hóa query cho báo cáo tài chính theo thời gian thực.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế microservice payment: các service cần tách riêng.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để prevent double withdrawal attack.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích cách reconcile giữa transactions và ledger bất biến.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phương pháp sử dụng cache cho API báo cáo doanh thu.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để implement role-based access control trong hệ thống thanh toán.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế API webhook để nhận callback từ ngân hàng một cách an toàn.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để validate và sanitize dữ liệu đầu vào của API giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách implement alert khi transaction failed hoặc timeout.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích cách hoạt động của blockchain và smart contract trong Fintech.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để handle backpressure trong message queue tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Triển khai rate-limiting cho multi-tenant API.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế data retention policy cho ledger system.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách log transaction audit an toàn và tuân thủ GDPR.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế hệ thống reconciliation giữa nhiều ngân hàng.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phương pháp chống fraud khi người dùng thay đổi số tiền giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để implement distributed tracing cho API tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách bạn thiết kế snapshot cho ledger để tăng hiệu năng báo cáo.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích cách partition data để tăng throughput trong hệ thống transaction.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để prevent replay attack trên webhook.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách bạn xử lý transaction rollback khi một service bị fail trong Saga pattern.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phân tích trade-off giữa consistency và availability trong distributed ledger.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Triển khai alert khi bất thường trong volume giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để encrypt dữ liệu trong transit và at rest.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế API thanh toán với các mức ưu tiên khác nhau.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để kiểm thử tính idempotent của endpoint.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế cơ chế transaction queue để xử lý hàng nghìn lệnh cùng lúc.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách handle concurrency khi cùng lúc cập nhật balance người dùng.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích Eventual Consistency và cách áp dụng cho ledger system.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để giảm latency trong query tổng hợp giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách implement audit trail cho tất cả request API.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế hệ thống reward point và tích hợp với ví điện tử.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm thế nào để detect và prevent duplicate transactions.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách triển khai Saga pattern trong hệ thống payment.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích cách secure API key khi gọi bên thứ ba.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế cơ sở dữ liệu cho giao dịch định kỳ (recurring payments).
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để implement throttling và circuit breaker cho API.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phân tích các chỉ số performance API trong fintech: latency, throughput, error rate.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách thiết kế hệ thống escrow cho P2P lending.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế dashboard giám sát giao dịch theo thời gian thực.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để đồng bộ dữ liệu giữa microservices trong transaction-critical system.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách quản lý schema migration cho database giao dịch.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để đảm bảo data integrity khi sử dụng async processing.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế hệ thống refund và chargeback xử lý nhanh.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách apply hashing và digital signature để đảm bảo giao dịch không bị giả mạo.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích cách dùng optimistic locking để tránh lost update.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để implement API versioning trong hệ thống tài chính.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách thiết kế hệ thống webhook retry an toàn.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để scale hệ thống transaction lên hàng triệu request/ngày.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế cơ chế alert khi balance âm hoặc bất thường.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Giải thích trade-off giữa consistency, availability và partition tolerance trong fintech.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để implement full audit trail cho tất cả giao dịch người dùng.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Phương pháp bảo vệ dữ liệu nhạy cảm khỏi insider threat.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế hệ thống subscription billing tự động.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Làm sao để handle delayed payment callback từ ngân hàng.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách triển khai unit test và integration test cho payment API.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Thiết kế ledger system theo dạng append-only để tránh dữ liệu bị sửa đổi.
+Kỹ sư Phần mềm (Backend),Tài chính/Fintech,Cách monitor fraud patterns bằng analytics trong hệ thống ví điện tử.
 Kỹ sư DevOps,Y tế/HealthTech,Giải thích về các tiêu chuẩn bảo mật dữ liệu y tế (ví dụ: HIPAA, GDPR).
 Kỹ sư DevOps,Y tế/HealthTech,Cách triển khai cơ chế Rollback an toàn cho một ứng dụng sức khỏe (Health App).
 Kỹ sư DevOps,Y tế/HealthTech,Thiết kế CI/CD pipeline cho hệ thống đa môi trường (dev, staging, production).

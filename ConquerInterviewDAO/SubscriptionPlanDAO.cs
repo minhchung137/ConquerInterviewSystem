@@ -46,6 +46,7 @@ namespace ConquerInterviewDAO
         public async Task<SubscriptionPlan?> GetByIdAsync(int planId)
         {
             return await _context.SubscriptionPlans
+                .AsNoTracking()
                 .FirstOrDefaultAsync(p => p.PlanId == planId);
         }
 
