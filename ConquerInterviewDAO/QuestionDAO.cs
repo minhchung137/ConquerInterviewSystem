@@ -63,7 +63,7 @@ namespace ConquerInterviewDAO
             {
                 try
                 {
-                    var response = await client.PostAsJsonAsync("http://localhost:5000/api/generate_question", payload);
+                    var response = await client.PostAsJsonAsync("https://0xs2f4db-5000.asse.devtunnels.ms/api/generate_question", payload);
 
                     if (response.IsSuccessStatusCode)
                     {
