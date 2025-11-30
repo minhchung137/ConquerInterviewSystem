@@ -325,5 +325,6 @@ def personalize_path():
         return jsonify({"error": str(e), "status": "Failed"}), 500
 # --- CHẠY APP ---
 if __name__ == '__main__':
-    print("🚀 Flask AI Service is running at http://127.0.0.1:5000")
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    print(f"🚀 Flask AI Service is running at port {port}")
+    app.run(host="0.0.0.0", port=port, debug=True)
