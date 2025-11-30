@@ -86,8 +86,8 @@ namespace ConquerInterviewDAO
 
             // Chuẩn bị payload cho Python API
             var payload = new { reports = reports };
-            var response = await client.PostAsJsonAsync("https://0xs2f4db-5000.asse.devtunnels.ms/api/personalization", payload);
-
+            var response = await client.PostAsJsonAsync("http://localhost:5000/api/personalization", payload);
+            
             if (!response.IsSuccessStatusCode)
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
