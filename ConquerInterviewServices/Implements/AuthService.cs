@@ -50,8 +50,11 @@ namespace ConquerInterviewServices.Implements
             };
 
             _authRepository.AddUser(user);
-            _emailService.SendEmail(user.Email, "Welcome",
-               $"Wellcome to Conquer Interview");
+            var template = _emailService.LoadTemplate("WelcomeEmailTemplate.html");
+            template = template.Replace("{FullName}", user.FullName);
+
+            _emailService.SendEmail(request.Email, "Welcome to Conquer Interview", template, true);
+
 
             return MapToUserResponse(user);
         }
@@ -125,9 +128,16 @@ namespace ConquerInterviewServices.Implements
 
             _authRepository.UpdateUser(user);
 
-            // gửi email
-            _emailService.SendEmail(user.Email, "Password Reset",
-                $"Click this link to reset your password: https://yourdomain.com/reset-password?token={token}");
+            
+
+            var template = _emailService.LoadTemplate("ResetPasswordTemplate.html");
+            var resetLink = $"https://www.conquerinterview.site/reset-password?token={token}";
+
+            template = template.Replace("{FullName}", user.FullName)
+                               .Replace("{ResetLink}", resetLink);
+
+            _emailService.SendEmail(user.Email, "Reset your password", template, true);
+
         }
 
         public void ResetPassword(string token, string newPassword)

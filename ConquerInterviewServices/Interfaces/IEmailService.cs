@@ -8,6 +8,8 @@ namespace ConquerInterviewServices.Interfaces
 {
     public interface IEmailService
     {
-        public void SendEmail(string to, string subject, string body);
+        void SendEmail(string to, string subject, string body, bool isHtml = false);
+        string LoadTemplate(string templateName);
     }
+
 }

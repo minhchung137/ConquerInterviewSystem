@@ -193,7 +193,7 @@ public partial class ConquerInterviewDbContext : DbContext
         {
             entity.HasKey(e => e.PersonalizationId).HasName("PRIMARY");
 
-            entity.ToTable("Personalization");
+            entity.ToTable("personalization");
 
             entity.HasIndex(e => e.CustomerId, "fk_personal_customer");
 
