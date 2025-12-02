@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConquerInterviewBO.Models;
-
+[Table("personalization")]
 public partial class Personalization
 {
     public int PersonalizationId { get; set; }

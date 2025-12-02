@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConquerInterviewBO.Models;
-
+[Table("subscriptionplans")]
 public partial class SubscriptionPlan
 {
     public int PlanId { get; set; }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ConquerInterviewBO.Models;
-
+[Table("payments")]
 public partial class Payment
 {
     public int PaymentId { get; set; }

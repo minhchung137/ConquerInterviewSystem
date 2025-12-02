@@ -14,7 +14,7 @@ namespace ConquerInterviewServices.Implements
         public AIService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("http://localhost:5000"); // Flask AI server
+            _httpClient.BaseAddress = new Uri("http://14.225.212.59:5000"); // Flask AI server
         }
 
         public async Task<AIQuestionResponse?> StartInterviewAsync(string topic, string industry)

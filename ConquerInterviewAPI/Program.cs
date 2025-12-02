@@ -142,34 +142,32 @@ builder.Services.AddSingleton(payOS);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Conquer Interview API v1");
+    c.RoutePrefix = "swagger"; // bắt buộc: để /swagger hoạt động
+});
+
 app.UseDeveloperExceptionPage();
 
 app.UseMiddleware<ExceptionMiddleware>();
-//app.UseHttpsRedirection();
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
+
+//if (!app.Environment.IsDevelopment())
+//{
+//    app.UseHttpsRedirection();
+//}
+
 app.UseCors();
+
 app.UseAuthentication();
 
-//Custom error 403
-app.Use(async (context, next) =>
-{
-    await next();
-
-    if (context.Response.StatusCode == StatusCodes.Status403Forbidden)
-    {
-        context.Response.ContentType = "application/json";
-        var response = APIResponse<string>.Fail(AppErrorCode.ForbiddenAccess, ResponseStatus.Forbidden);
-        await context.Response.WriteAsync(System.Text.Json.JsonSerializer.Serialize(response));
-    }
-});
 app.UseAuthorization();
 
 app.MapControllers();

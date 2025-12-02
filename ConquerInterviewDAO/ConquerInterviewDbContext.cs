@@ -373,7 +373,7 @@ public partial class ConquerInterviewDbContext : DbContext
 
             entity.HasMany(d => d.Roles).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(
-                    "UserRole",
+                    "userroles",
                     r => r.HasOne<Role>().WithMany()
                         .HasForeignKey("RoleId")
                         .HasConstraintName("fk_userroles_role"),
@@ -385,7 +385,7 @@ public partial class ConquerInterviewDbContext : DbContext
                         j.HasKey("UserId", "RoleId")
                             .HasName("PRIMARY")
                             .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-                        j.ToTable("UserRoles");
+                        j.ToTable("userroles");
                         j.HasIndex(new[] { "RoleId" }, "fk_userroles_role");
                         j.IndexerProperty<int>("UserId").HasColumnName("user_id");
                         j.IndexerProperty<int>("RoleId").HasColumnName("role_id");

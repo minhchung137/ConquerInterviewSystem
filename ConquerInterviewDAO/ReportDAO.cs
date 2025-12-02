@@ -43,7 +43,7 @@ namespace ConquerInterviewDAO
                 questionText = question, // Thêm dòng này
                 answerText = answer.TextAnswer ?? string.Empty
             };
-            var response = await client.PostAsJsonAsync("http://localhost:5000/api/evaluate_answer", payload);
+            var response = await client.PostAsJsonAsync("http://14.225.212.59:5000/api/evaluate_answer", payload);
 
             if (!response.IsSuccessStatusCode)
             {
